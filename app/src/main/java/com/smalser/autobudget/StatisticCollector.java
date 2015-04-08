@@ -1,5 +1,6 @@
 package com.smalser.autobudget;
 
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,14 +12,13 @@ public class StatisticCollector {
         this.messages = messages;
     }
 
-    //todo method name
-    public Double getCategory(Category category) {
+    public Double getCategory(Category category, Calendar fromDate) {
         double result = 0;
         Pattern p = Pattern.compile(category.resolve());
 
         for (Message msg : messages) {
             Matcher m = p.matcher(msg.source);
-            if (m.matches()) {
+            if (m.matches() && fromDate.before(msg.date)) {
                 result += msg.purchase;
             }
         }
