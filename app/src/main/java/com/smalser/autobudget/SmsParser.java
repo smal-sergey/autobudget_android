@@ -13,10 +13,10 @@ import static com.smalser.autobudget.Message.fromMatcher;
 public class SmsParser {
     private static final String SMS_PARSER_TAG = "Sms_parser_log";
 
-    private static final String PATTERN_WITHDRAW = "Spisanie: (\\d+\\.\\d+).*Operaciya: (.+) Data: (\\d\\d/\\d\\d/\\d\\d) Balans: (\\d+\\.\\d+) RUB";
+    private static final String PATTERN_WITHDRAW = "Spisanie:? (\\d+\\.\\d+).*\\s*Operaciya:? ([\\w\\d ]+[\\w\\d]).*\\s*Data:? (\\d\\d/\\d\\d/\\d\\d).*\\s*Balans:? (\\d+\\.\\d+) .*";
     private static final Pattern MSG_WITHDRAW_FORMAT = Pattern.compile(PATTERN_WITHDRAW);
 
-    private static final String PATTERN_BUY = "Pokupka: (\\d+\\.\\d+).*Torgovaya tochka: (.+) Data: (\\d\\d/\\d\\d/\\d\\d) Balans: (\\d+\\.\\d+) RUB";
+    private static final String PATTERN_BUY = "Pokupka:? (\\d+\\.\\d+).*\\s*Torgovaya tochka:? ([\\w\\d\\.\"& ]+[\\w\\d]).*\\s*Data:? (\\d\\d/\\d\\d/\\d\\d).*\\s*Balans:? (\\d+\\.\\d+) .*";
     private static final Pattern MSG_BUY_FORMAT = Pattern.compile(PATTERN_BUY);
 
     //todo make it in separate thread

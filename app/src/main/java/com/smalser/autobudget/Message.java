@@ -12,8 +12,10 @@ public class Message {
     public final String source;
     public final Calendar date;
     public final Double balance;
+    public final String fullMessage;
 
-    public Message(Double purchase, String source, Calendar date, Double balance) {
+    public Message(String fullMessage, Double purchase, String source, Calendar date, Double balance) {
+        this.fullMessage = fullMessage;
         this.purchase = purchase;
         this.source = source;
         this.date = date;
@@ -21,12 +23,13 @@ public class Message {
     }
 
     public static Message fromMatcher(Matcher m) throws ParseException {
+        String fullMessage = m.group(0);
         Double purchase = Double.parseDouble(m.group(1));
         String source = m.group(2);
         Calendar date = Calendar.getInstance();
         date.setTime(DATE_FORMAT.parse(m.group(3)));
 
         Double balance = Double.parseDouble(m.group(4));
-        return new Message(purchase, source, date, balance);
+        return new Message(fullMessage, purchase, source, date, balance);
     }
 }
