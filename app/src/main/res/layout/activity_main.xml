@@ -8,32 +8,31 @@
         android:layout_height="wrap_content">
 
         <Spinner
-            android:layout_alignParentStart="true"
             android:id="@+id/spinnerDateFilter"
-            android:layout_alignParentLeft="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge">
-        </Spinner>
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <TextView
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_below="@id/spinnerDateFilter"
             android:id="@+id/lblDateFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@id/spinnerDateFilter"
             android:text="@string/txt_from_date"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <Button
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
             android:id="@+id/btnShow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
             android:layout_margin="5dp"
-            android:text="@string/txt_btn_show"/>
+            android:text="@string/txt_btn_show" />
     </RelativeLayout>
 
     <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -48,12 +47,12 @@
 
             <TextView
                 android:id="@+id/lblQiwi"
-                android:text="@string/txt_qiwi"
-                style="@style/tableItem"/>
+                style="@style/tableItem"
+                android:text="@string/txt_qiwi" />
 
             <TextView
                 android:id="@+id/lblQiwiValue"
-                style="@style/tableItem"/>
+                style="@style/tableItem" />
         </TableRow>
 
         <TableRow
@@ -62,12 +61,12 @@
 
             <TextView
                 android:id="@+id/lblProducts"
-                android:text="@string/txt_products"
-                style="@style/tableItem"/>
+                style="@style/tableItem"
+                android:text="@string/txt_products" />
 
             <TextView
                 android:id="@+id/lblProductsValue"
-                style="@style/tableItem"/>
+                style="@style/tableItem" />
         </TableRow>
 
         <TableRow
@@ -76,12 +75,12 @@
 
             <TextView
                 android:id="@+id/lblSport"
-                android:text="@string/txt_sport"
-                style="@style/tableItem"/>
+                style="@style/tableItem"
+                android:text="@string/txt_sport" />
 
             <TextView
                 android:id="@+id/lblSportValue"
-                style="@style/tableItem"/>
+                style="@style/tableItem" />
         </TableRow>
 
         <TableRow
@@ -90,12 +89,68 @@
 
             <TextView
                 android:id="@+id/lblCashWithdraw"
-                android:text="@string/txt_cash_withdraw"
-                style="@style/tableItem"/>
+                style="@style/tableItem"
+                android:text="@string/txt_cash_withdraw" />
 
             <TextView
                 android:id="@+id/lblCashWithdrawValue"
-                style="@style/tableItem"/>
+                style="@style/tableItem" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowCafe"
+            style="@style/tableRow">
+
+            <TextView
+                android:id="@+id/lblCafe"
+                style="@style/tableItem"
+                android:text="@string/txt_cafe" />
+
+            <TextView
+                android:id="@+id/lblCafeValue"
+                style="@style/tableItem" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowTransport"
+            style="@style/tableRow">
+
+            <TextView
+                android:id="@+id/lblTransport"
+                style="@style/tableItem"
+                android:text="@string/txt_transport" />
+
+            <TextView
+                android:id="@+id/lblTransportValue"
+                style="@style/tableItem" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowClothes"
+            style="@style/tableRow">
+
+            <TextView
+                android:id="@+id/lblClothes"
+                style="@style/tableItem"
+                android:text="@string/txt_clothes" />
+
+            <TextView
+                android:id="@+id/lblClothesValue"
+                style="@style/tableItem" />
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRowRelax"
+            style="@style/tableRow">
+
+            <TextView
+                android:id="@+id/lblRelax"
+                style="@style/tableItem"
+                android:text="@string/txt_relax" />
+
+            <TextView
+                android:id="@+id/lblRelaxValue"
+                style="@style/tableItem" />
         </TableRow>
 
         <TableRow
@@ -103,15 +158,15 @@
             style="@style/tableRow">
 
             <TextView
-                android:id="@+id/lblCashOther"
-                android:text="@string/txt_other"
-                style="@style/tableItem"/>
+                android:id="@+id/lblOther"
+                style="@style/tableItem"
+                android:text="@string/txt_other" />
 
             <TextView
                 android:id="@+id/lblOtherValue"
-                style="@style/tableItem"/>
+                style="@style/tableItem" />
         </TableRow>
 
-        </TableLayout>
+    </TableLayout>
 
 </LinearLayout>

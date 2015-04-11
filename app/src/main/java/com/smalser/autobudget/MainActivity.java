@@ -32,6 +32,10 @@ public class MainActivity extends ActionBarActivity {
     TextView mCashVal;
     TextView mOtherVal;
     TextView mDateFilterTxt;
+    TextView mCafeVal;
+    TextView mTransportVal;
+    TextView mClothesVal;
+    TextView mRelaxVal;
 
     private static final int DATE_DIALOG_ID = 999;
     private int curYear;
@@ -49,7 +53,10 @@ public class MainActivity extends ActionBarActivity {
         mCashVal = (TextView) findViewById(R.id.lblCashWithdrawValue);
         mOtherVal = (TextView) findViewById(R.id.lblOtherValue);
         mDateFilterTxt = (TextView) findViewById(R.id.lblDateFilter);
-
+        mCafeVal = (TextView) findViewById(R.id.lblCafeValue);
+        mTransportVal = (TextView) findViewById(R.id.lblTransportValue);
+        mClothesVal = (TextView) findViewById(R.id.lblClothesValue);
+        mRelaxVal = (TextView) findViewById(R.id.lblRelaxValue);
         mDateFilterTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -129,6 +136,12 @@ public class MainActivity extends ActionBarActivity {
                 mProductsVal.setText(statCollector.getCategory(Category.PRODUCTS, cal) + " rub.");
                 mSportVal.setText(statCollector.getCategory(Category.SPORT, cal) + " rub.");
                 mCashVal.setText(statCollector.getCategory(Category.CASH_WITHDRAW, cal) + " rub.");
+
+                mCafeVal.setText(statCollector.getCategory(Category.CAFE, cal) + " rub.");
+                mTransportVal.setText(statCollector.getCategory(Category.TRANSPORT, cal) + " rub.");
+                mClothesVal.setText(statCollector.getCategory(Category.CLOTHES, cal) + " rub.");
+                mRelaxVal.setText(statCollector.getCategory(Category.RELAX, cal) + " rub.");
+
                 mOtherVal.setText(statCollector.getCategory(Category.OTHER, cal) + " rub.");
             }
 

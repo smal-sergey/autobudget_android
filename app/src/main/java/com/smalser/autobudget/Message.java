@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.regex.Matcher;
 
 public class Message {
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/mm/yy");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yy");
     public final Double purchase;
     public final String source;
     public final Calendar date;
