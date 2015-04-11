@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -25,17 +26,10 @@ import java.util.List;
 public class MainActivity extends ActionBarActivity {
 
     private final SmsParser smsParser = new SmsParser();
+
     Button mBtnInbox;
-    TextView mQiwiVal;
-    TextView mProductsVal;
-    TextView mSportVal;
-    TextView mCashVal;
-    TextView mOtherVal;
     TextView mDateFilterTxt;
-    TextView mCafeVal;
-    TextView mTransportVal;
-    TextView mClothesVal;
-    TextView mRelaxVal;
+    ListView mCategories;
 
     private static final int DATE_DIALOG_ID = 999;
     private int curYear;
@@ -47,16 +41,8 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mQiwiVal = (TextView) findViewById(R.id.lblQiwiValue);
-        mProductsVal = (TextView) findViewById(R.id.lblProductsValue);
-        mSportVal = (TextView) findViewById(R.id.lblSportValue);
-        mCashVal = (TextView) findViewById(R.id.lblCashWithdrawValue);
-        mOtherVal = (TextView) findViewById(R.id.lblOtherValue);
+        mCategories = (ListView) findViewById(R.id.listCategories);
         mDateFilterTxt = (TextView) findViewById(R.id.lblDateFilter);
-        mCafeVal = (TextView) findViewById(R.id.lblCafeValue);
-        mTransportVal = (TextView) findViewById(R.id.lblTransportValue);
-        mClothesVal = (TextView) findViewById(R.id.lblClothesValue);
-        mRelaxVal = (TextView) findViewById(R.id.lblRelaxValue);
         mDateFilterTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,17 +118,12 @@ public class MainActivity extends ActionBarActivity {
                 cal.set(Calendar.MONTH, curMonth);
                 cal.set(Calendar.DAY_OF_MONTH, curDay);
 
-                mQiwiVal.setText(statCollector.getCategory(Category.QIWI, cal) + " rub.");
-                mProductsVal.setText(statCollector.getCategory(Category.PRODUCTS, cal) + " rub.");
-                mSportVal.setText(statCollector.getCategory(Category.SPORT, cal) + " rub.");
-                mCashVal.setText(statCollector.getCategory(Category.CASH_WITHDRAW, cal) + " rub.");
+                //todo categories can be grouped: use ExpandableListView
+                List<CategoryTotal> statistic = statCollector.getAllCategories(cal);
+                ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.row,
+                        statistic);
 
-                mCafeVal.setText(statCollector.getCategory(Category.CAFE, cal) + " rub.");
-                mTransportVal.setText(statCollector.getCategory(Category.TRANSPORT, cal) + " rub.");
-                mClothesVal.setText(statCollector.getCategory(Category.CLOTHES, cal) + " rub.");
-                mRelaxVal.setText(statCollector.getCategory(Category.RELAX, cal) + " rub.");
-
-                mOtherVal.setText(statCollector.getCategory(Category.OTHER, cal) + " rub.");
+                mCategories.setAdapter(msgAdapter);
             }
 
             private List<String> read(Cursor c) {
@@ -155,7 +136,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private String stringify(Integer value){
+    private String stringify(Integer value) {
         return value < 10 ? "0" + value.toString() : value.toString();
     }
 
@@ -183,7 +164,8 @@ public class MainActivity extends ActionBarActivity {
                         curDay = selectedDay;
 
                         updateDate();
-                    }}, curYear, curMonth, curDay);
+                    }
+                }, curYear, curMonth, curDay);
         }
         return null;
     }

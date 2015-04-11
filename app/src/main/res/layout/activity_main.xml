@@ -5,7 +5,9 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#C0C0C0"
+        android:layout_marginBottom="5dp">
 
         <Spinner
             android:id="@+id/spinnerDateFilter"
@@ -35,138 +37,10 @@
             android:text="@string/txt_btn_show" />
     </RelativeLayout>
 
-    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/tableLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:padding="5dp">
-
-        <TableRow
-            android:id="@+id/tableRowQiwi"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblQiwi"
-                style="@style/tableItem"
-                android:text="@string/txt_qiwi" />
-
-            <TextView
-                android:id="@+id/lblQiwiValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowProducts"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblProducts"
-                style="@style/tableItem"
-                android:text="@string/txt_products" />
-
-            <TextView
-                android:id="@+id/lblProductsValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowSport"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblSport"
-                style="@style/tableItem"
-                android:text="@string/txt_sport" />
-
-            <TextView
-                android:id="@+id/lblSportValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowCashWithdraw"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblCashWithdraw"
-                style="@style/tableItem"
-                android:text="@string/txt_cash_withdraw" />
-
-            <TextView
-                android:id="@+id/lblCashWithdrawValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowCafe"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblCafe"
-                style="@style/tableItem"
-                android:text="@string/txt_cafe" />
-
-            <TextView
-                android:id="@+id/lblCafeValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowTransport"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblTransport"
-                style="@style/tableItem"
-                android:text="@string/txt_transport" />
-
-            <TextView
-                android:id="@+id/lblTransportValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowClothes"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblClothes"
-                style="@style/tableItem"
-                android:text="@string/txt_clothes" />
-
-            <TextView
-                android:id="@+id/lblClothesValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowRelax"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblRelax"
-                style="@style/tableItem"
-                android:text="@string/txt_relax" />
-
-            <TextView
-                android:id="@+id/lblRelaxValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-        <TableRow
-            android:id="@+id/tableRowOther"
-            style="@style/tableRow">
-
-            <TextView
-                android:id="@+id/lblOther"
-                style="@style/tableItem"
-                android:text="@string/txt_other" />
-
-            <TextView
-                android:id="@+id/lblOtherValue"
-                style="@style/tableItem" />
-        </TableRow>
-
-    </TableLayout>
+    <ListView
+        android:id="@+id/listCategories"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+    </ListView>
 
 </LinearLayout>

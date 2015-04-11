@@ -54,4 +54,28 @@ public class StatisticCollector {
         }
         return (Math.round(result * 100) + 0.0) / 100;
     }
+
+    public List<CategoryTotal> getAllCategories(Calendar fromDate) {
+        List<CategoryTotal> stat = new ArrayList<>();
+        for (Category category : Category.values()) {
+            List<Message> messages = filterMessages(category, fromDate);
+
+            double result = 0.0;
+            for (Message msg : messages) {
+                result += msg.purchase;
+            }
+            stat.add(new CategoryTotal(messages, (Math.round(result * 100) + 0.0) / 100, category));
+        }
+        return stat;
+    }
+
+    private List<Message> filterMessages(Category category, Calendar fromDate) {
+        List<Message> filtered = new ArrayList<>();
+        for (Message msg : categorized.get(category)) {
+            if (fromDate.before(msg.date)) {
+                filtered.add(msg);
+            }
+        }
+        return filtered;
+    }
 }

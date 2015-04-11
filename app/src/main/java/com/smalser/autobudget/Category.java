@@ -51,4 +51,29 @@ public enum Category {
         }
         return result;
     }
+
+    public int lblId() {
+        switch (this) {
+            case QIWI:
+                return R.string.txt_qiwi;
+            case PRODUCTS:
+                return R.string.txt_products;
+            case CASH_WITHDRAW:
+                return R.string.txt_cash_withdraw;
+            case SPORT:
+                return R.string.txt_sport;
+            case CAFE:
+                return R.string.txt_cafe;
+            case TRANSPORT:
+                return R.string.txt_transport;
+            case CLOTHES:
+                return R.string.txt_clothes;
+            case RELAX:
+                return R.string.txt_relax;
+            case OTHER:
+                return R.string.txt_other;
+            default:
+                return -1;
+        }
+    }
 }
