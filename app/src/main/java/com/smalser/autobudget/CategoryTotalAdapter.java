@@ -20,7 +20,7 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
 
         if (rowView == null) {
             LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = layoutInflater.inflate(R.layout.row, parent, false);
+            rowView = layoutInflater.inflate(R.layout.category_total_row, parent, false);
 
             TextView category = (TextView) rowView.findViewById(R.id.lblCategory);
             TextView total = (TextView) rowView.findViewById(R.id.lblTotal);

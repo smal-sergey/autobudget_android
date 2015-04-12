@@ -3,6 +3,7 @@ package com.smalser.autobudget;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -42,6 +43,18 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         mCategories = (ListView) findViewById(R.id.listCategories);
+        mCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                CategoryTotal categoryTotal = (CategoryTotal) parent.getItemAtPosition(position);
+                MyApplication context = (MyApplication) MainActivity.this.getApplication();
+                context.setData(categoryTotal.messages);
+
+                Intent intent = new Intent(MainActivity.this, CategoryReportActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mDateFilterTxt = (TextView) findViewById(R.id.lblDateFilter);
         mDateFilterTxt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +133,7 @@ public class MainActivity extends ActionBarActivity {
 
                 //todo categories can be grouped: use ExpandableListView
                 List<CategoryTotal> statistic = statCollector.getAllCategories(cal);
-                ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.row,
+                ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.category_total_row,
                         statistic);
 
                 mCategories.setAdapter(msgAdapter);
@@ -136,17 +149,12 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private String stringify(Integer value) {
-        return value < 10 ? "0" + value.toString() : value.toString();
-    }
-
     private void updateDate() {
         String label = getResources().getString(R.string.txt_from_date);
 
         mDateFilterTxt.setText(new StringBuilder()
                 .append(label).append(" ")
-                .append(stringify(curDay)).append("-").append(stringify(curMonth + 1)).append("-")
-                .append(curYear).append(" "));
+                .append(MyApplication.stringifyDate(curYear, curMonth, curDay)));
     }
 
     @Override

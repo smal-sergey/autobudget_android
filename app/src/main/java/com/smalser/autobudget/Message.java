@@ -32,4 +32,8 @@ public class Message {
         Double balance = Double.parseDouble(m.group(4));
         return new Message(fullMessage, purchase, source, date, balance);
     }
+
+    public String getDateString() {
+        return MyApplication.stringifyDate(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
+    }
 }
