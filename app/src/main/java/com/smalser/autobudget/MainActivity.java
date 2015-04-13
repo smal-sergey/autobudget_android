@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
 import android.widget.Spinner;
@@ -49,7 +48,7 @@ public class MainActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CategoryTotal categoryTotal = (CategoryTotal) parent.getItemAtPosition(position);
                 MyApplication context = (MyApplication) MainActivity.this.getApplication();
-                context.setData(categoryTotal.messages);
+                context.setFilteredMessages(categoryTotal.messages);
 
                 Intent intent = new Intent(MainActivity.this, CategoryReportActivity.class);
                 startActivity(intent);

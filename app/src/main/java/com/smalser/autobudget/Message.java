@@ -13,6 +13,7 @@ public class Message {
     public final Calendar date;
     public final Double balance;
     public final String fullMessage;
+    private Category category;
 
     public Message(String fullMessage, Double purchase, String source, Calendar date, Double balance) {
         this.fullMessage = fullMessage;
@@ -35,5 +36,13 @@ public class Message {
 
     public String getDateString() {
         return MyApplication.stringifyDate(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

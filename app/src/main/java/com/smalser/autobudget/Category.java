@@ -1,5 +1,8 @@
 package com.smalser.autobudget;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 public enum Category {
     QIWI,
     PRODUCTS,
@@ -50,6 +53,20 @@ public enum Category {
                 break;
         }
         return result;
+    }
+
+    private String getPrefsName(){
+        return "category_template_prefs";
+    }
+
+    public String loadTemplate(Context context){
+        SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
+        return prefs.getString(toString(), resolve());
+    }
+
+    public void saveTemplate(Context context, String template){
+        SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
+        prefs.edit().putString(toString(), template).commit();
     }
 
     public int lblId() {

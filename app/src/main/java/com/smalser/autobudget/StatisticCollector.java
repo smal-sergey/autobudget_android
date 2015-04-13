@@ -33,6 +33,7 @@ public class StatisticCollector {
                 Matcher m = p.matcher(msg.source);
                 if (m.matches()) {
                     matched.add(msg);
+                    msg.setCategory(category);
                 }
             }
 
