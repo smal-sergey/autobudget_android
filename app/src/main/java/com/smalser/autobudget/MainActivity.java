@@ -19,6 +19,8 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.smalser.autobudget.report.CategoryReportActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -28,7 +30,6 @@ public class MainActivity extends ActionBarActivity {
 
     private final SmsParser smsParser = new SmsParser();
 
-    Button mBtnInbox;
     TextView mDateFilterTxt;
     ListView mCategories;
 
@@ -105,48 +106,44 @@ public class MainActivity extends ActionBarActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
 
-        mBtnInbox = (Button) findViewById(R.id.btnShow);
-        mBtnInbox.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Uri inboxURI = Uri.parse("content://sms/inbox");
+    private List<String> read(Cursor c) {
+        List<String> messages = new ArrayList<>();
+        while (c.moveToNext()) {
+            messages.add(c.getString(2));
+        }
+        return messages;
+    }
 
-                String[] reqCols = new String[]{"_id", "address", "body"};
-                String reqSelection = "address = ?";
-                String[] reqSelectionArgs = new String[]{"Citialert"};
+    private void updateCategories(){
+        Uri inboxURI = Uri.parse("content://sms/inbox");
 
-                // Get Content Resolver object, which will deal with Content Provider
-                ContentResolver cr = getContentResolver();
+        String[] reqCols = new String[]{"_id", "address", "body"};
+        String reqSelection = "address = ?";
+        String[] reqSelectionArgs = new String[]{"Citialert"};
 
-                // Fetch Inbox SMS Message from Built-in Content Provider
-                Cursor c = cr.query(inboxURI, reqCols, reqSelection, reqSelectionArgs, null);
+        // Get Content Resolver object, which will deal with Content Provider
+        ContentResolver cr = getContentResolver();
 
-                List<String> messages = read(c);
-                List<Message> results = smsParser.parse(messages);
-                StatisticCollector statCollector = new StatisticCollector(results);
+        // Fetch Inbox SMS Message from Built-in Content Provider
+        Cursor c = cr.query(inboxURI, reqCols, reqSelection, reqSelectionArgs, null);
 
-                Calendar cal = Calendar.getInstance();
-                cal.set(Calendar.YEAR, curYear);
-                cal.set(Calendar.MONTH, curMonth);
-                cal.set(Calendar.DAY_OF_MONTH, curDay);
+        List<String> messages = read(c);
+        List<Message> results = smsParser.parse(messages);
+        StatisticCollector statCollector = new StatisticCollector(results);
 
-                //todo categories can be grouped: use ExpandableListView
-                List<CategoryTotal> statistic = statCollector.getAllCategories(cal);
-                ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.category_total_row,
-                        statistic);
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, curYear);
+        cal.set(Calendar.MONTH, curMonth);
+        cal.set(Calendar.DAY_OF_MONTH, curDay);
 
-                mCategories.setAdapter(msgAdapter);
-            }
+        //todo categories can be grouped: use ExpandableListView
+        List<CategoryTotal> statistic = statCollector.getAllCategories(cal);
+        ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.category_total_row,
+                statistic);
 
-            private List<String> read(Cursor c) {
-                List<String> messages = new ArrayList<>();
-                while (c.moveToNext()) {
-                    messages.add(c.getString(2));
-                }
-                return messages;
-            }
-        });
+        mCategories.setAdapter(msgAdapter);
     }
 
     private void updateDate() {
@@ -155,6 +152,8 @@ public class MainActivity extends ActionBarActivity {
         mDateFilterTxt.setText(new StringBuilder()
                 .append(label).append(" ")
                 .append(MyApplication.stringifyDate(curYear, curMonth, curDay)));
+
+        updateCategories();
     }
 
     @Override

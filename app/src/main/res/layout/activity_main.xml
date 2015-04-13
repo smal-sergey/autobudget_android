@@ -26,15 +26,6 @@
             android:layout_below="@id/spinnerDateFilter"
             android:text="@string/txt_from_date"
             android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <Button
-            android:id="@+id/btnShow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_margin="5dp"
-            android:text="@string/txt_btn_show" />
     </RelativeLayout>
 
     <ListView

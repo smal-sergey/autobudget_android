@@ -1,8 +1,12 @@
-package com.smalser.autobudget;
+package com.smalser.autobudget.report;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ListView;
+
+import com.smalser.autobudget.Message;
+import com.smalser.autobudget.MyApplication;
+import com.smalser.autobudget.R;
 
 import java.util.List;
 

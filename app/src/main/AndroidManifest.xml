@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".CategoryReportActivity"/>
+        <activity android:name=".report.CategoryReportActivity"/>
     </application>
 
 </manifest>
