@@ -79,4 +79,17 @@ public class StatisticCollector {
         }
         return filtered;
     }
+
+    public Calendar getMinDate() {
+        Calendar minDate = Calendar.getInstance();
+        for (Category category : categorized.keySet()) {
+            List<Message> messages = categorized.get(category);
+            for (Message msg : messages) {
+                if(minDate.after(msg.date)){
+                    minDate.setTimeInMillis(msg.date.getTimeInMillis());
+                }
+            }
+        }
+        return minDate;
+    }
 }

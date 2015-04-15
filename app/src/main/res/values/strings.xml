@@ -22,6 +22,7 @@
         <item>Last month</item>
         <item>Last 6 months</item>
         <item>Last year</item>
+        <item>All time</item>
         <item>Custom</item>
     </string-array>
 

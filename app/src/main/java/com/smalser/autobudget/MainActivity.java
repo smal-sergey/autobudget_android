@@ -36,11 +36,14 @@ public class MainActivity extends ActionBarActivity {
     private int curYear;
     private int curMonth;
     private int curDay;
+    private StatisticCollector statCollector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        readAllMessages();
 
         mCategories = (ListView) findViewById(R.id.listCategories);
         mCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -90,6 +93,10 @@ public class MainActivity extends ActionBarActivity {
                         c.add(Calendar.YEAR, -1);
                         break;
                     case 4:
+                        c = statCollector.getMinDate();
+                        c.add(Calendar.DAY_OF_MONTH, -1); //to show all dates
+                        break;
+                    case 5:
                         showDialog(DATE_DIALOG_ID);
                         return;
                 }
@@ -107,15 +114,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private List<String> read(Cursor c) {
-        List<String> messages = new ArrayList<>();
-        while (c.moveToNext()) {
-            messages.add(c.getString(2));
-        }
-        return messages;
-    }
-
-    private void updateCategories(){
+    private void readAllMessages() {
         Uri inboxURI = Uri.parse("content://sms/inbox");
 
         String[] reqCols = new String[]{"_id", "address", "body"};
@@ -130,8 +129,18 @@ public class MainActivity extends ActionBarActivity {
 
         List<String> messages = read(c);
         List<Message> results = smsParser.parse(messages);
-        StatisticCollector statCollector = new StatisticCollector(results);
+        statCollector = new StatisticCollector(results);
+    }
 
+    private List<String> read(Cursor c) {
+        List<String> messages = new ArrayList<>();
+        while (c.moveToNext()) {
+            messages.add(c.getString(2));
+        }
+        return messages;
+    }
+
+    private void updateCategories(){
         Calendar cal = Calendar.getInstance();
         cal.set(Calendar.YEAR, curYear);
         cal.set(Calendar.MONTH, curMonth);
