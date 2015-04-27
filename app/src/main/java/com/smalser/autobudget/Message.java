@@ -35,7 +35,7 @@ public class Message {
     }
 
     public String getDateString() {
-        return MyApplication.stringifyDate(date.get(Calendar.YEAR), date.get(Calendar.MONTH), date.get(Calendar.DAY_OF_MONTH));
+        return MyApplication.stringifyDate(date);
     }
 
     public Category getCategory() {

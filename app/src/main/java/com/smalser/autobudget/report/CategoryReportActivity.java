@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
@@ -14,9 +15,10 @@ import com.smalser.autobudget.edit.EditMessageActivity;
 
 import java.util.List;
 
-public class CategoryReportActivity extends Activity{
-
+public class CategoryReportActivity extends Activity {
+    public static final String CATEGORY_EXTRA = "category_extra";
     ListView mCategoryReport;
+    private Category category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,11 +26,9 @@ public class CategoryReportActivity extends Activity{
         setContentView(R.layout.activity_category_report);
 
         mCategoryReport = (ListView) findViewById(R.id.listCategoryReport);
+        category = Category.valueOf(getIntent().getStringExtra(CATEGORY_EXTRA));
         final MyApplication app = (MyApplication) getApplication();
 
-        List<Message> report = app.getFilteredMessages();
-
-        mCategoryReport.setAdapter(new CategoryReportAdapter(CategoryReportActivity.this, R.layout.categories_report_row, report));
         mCategoryReport.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -37,5 +37,14 @@ public class CategoryReportActivity extends Activity{
                 startActivity(new Intent(CategoryReportActivity.this, EditMessageActivity.class));
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        MyApplication app = (MyApplication) getApplication();
+        List<Message> report = app.getFilteredMessages(category);
+        mCategoryReport.setAdapter(new CategoryReportAdapter(CategoryReportActivity.this, R.layout.categories_report_row, report));
     }
 }

@@ -20,6 +20,7 @@ import com.smalser.autobudget.R;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 public class EditMessageActivity extends Activity {
 
@@ -41,6 +42,13 @@ public class EditMessageActivity extends Activity {
 
         mFullMessageText = (TextView) findViewById(R.id.lblFullMessage);
         mFullMessageText.setText(app.getEditedMessage().fullMessage);
+        mFullMessageText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditPattern.setText(editedMessage.source);
+            }
+        });
+
         mBtnOk = (Button) findViewById(R.id.btnEditOk);
         mEditPattern = (EditText) findViewById(R.id.editPattern);
         mEditPattern.addTextChangedListener(new TextWatcher() {
@@ -57,7 +65,7 @@ public class EditMessageActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 CharSequence newPattern = s.toString();
-                mEditCategoryPattern.setText(curCategory.loadTemplate(EditMessageActivity.this) + "|(" + newPattern + ")");
+                mEditCategoryPattern.setText(mEditCategoryPattern.getText() + "|(" + newPattern + ")");
             }
         });
 
@@ -76,7 +84,17 @@ public class EditMessageActivity extends Activity {
             @Override
             public void afterTextChanged(Editable s) {
                 String template = mEditCategoryPattern.getText().toString();
-                String color = editedMessage.source.matches(template) ? "green" : "red";
+                String color = "red";
+
+                try {
+                    color = editedMessage.source.matches(template) ? "green" : "red";
+                    mBtnOk.setEnabled(true);
+                    mEditCategoryPattern.setBackgroundColor(getResources().getColor(R.color.green));
+                } catch (PatternSyntaxException exception) {
+                    mBtnOk.setEnabled(false);
+                    mEditCategoryPattern.setBackgroundColor(getResources().getColor(R.color.red));
+                }
+
                 String highlighted = editedMessage.fullMessage.replaceAll("(" + editedMessage.source + ")",
                         "<font color='" + color + "'>$1</font>");
 
@@ -109,6 +127,7 @@ public class EditMessageActivity extends Activity {
             public void onClick(View v) {
                 String template = mEditCategoryPattern.getText().toString();
                 curCategory.saveTemplate(EditMessageActivity.this, template);
+                finish();
             }
         });
 

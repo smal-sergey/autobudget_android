@@ -33,15 +33,14 @@ public class MainActivity extends ActionBarActivity {
     ListView mCategories;
 
     private static final int DATE_DIALOG_ID = 999;
-    private int curYear;
-    private int curMonth;
-    private int curDay;
-    private StatisticCollector statCollector;
+    private MyApplication app;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        app = (MyApplication) getApplication();
 
         readAllMessages();
 
@@ -50,10 +49,9 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CategoryTotal categoryTotal = (CategoryTotal) parent.getItemAtPosition(position);
-                MyApplication context = (MyApplication) MainActivity.this.getApplication();
-                context.setFilteredMessages(categoryTotal.messages);
 
                 Intent intent = new Intent(MainActivity.this, CategoryReportActivity.class);
+                intent.putExtra(CategoryReportActivity.CATEGORY_EXTRA, categoryTotal.category.toString());
                 startActivity(intent);
             }
         });
@@ -93,7 +91,7 @@ public class MainActivity extends ActionBarActivity {
                         c.add(Calendar.YEAR, -1);
                         break;
                     case 4:
-                        c = statCollector.getMinDate();
+                        c = app.getMinDate();
                         c.add(Calendar.DAY_OF_MONTH, -1); //to show all dates
                         break;
                     case 5:
@@ -101,10 +99,7 @@ public class MainActivity extends ActionBarActivity {
                         return;
                 }
 
-                curYear = c.get(Calendar.YEAR);
-                curMonth = c.get(Calendar.MONTH);
-                curDay = c.get(Calendar.DAY_OF_MONTH);
-
+                app.setCurDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
                 updateDate();
             }
 
@@ -112,6 +107,13 @@ public class MainActivity extends ActionBarActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        readAllMessages();
+        updateCategories();
     }
 
     private void readAllMessages() {
@@ -129,7 +131,7 @@ public class MainActivity extends ActionBarActivity {
 
         List<String> messages = read(c);
         List<Message> results = smsParser.parse(messages);
-        statCollector = new StatisticCollector(results);
+        app.setStatisticCollector(new StatisticCollector(results, this));
     }
 
     private List<String> read(Cursor c) {
@@ -140,14 +142,9 @@ public class MainActivity extends ActionBarActivity {
         return messages;
     }
 
-    private void updateCategories(){
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.YEAR, curYear);
-        cal.set(Calendar.MONTH, curMonth);
-        cal.set(Calendar.DAY_OF_MONTH, curDay);
-
+    private void updateCategories() {
         //todo categories can be grouped: use ExpandableListView
-        List<CategoryTotal> statistic = statCollector.getAllCategories(cal);
+        List<CategoryTotal> statistic = app.getAllCategories();
         ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.category_total_row,
                 statistic);
 
@@ -159,7 +156,7 @@ public class MainActivity extends ActionBarActivity {
 
         mDateFilterTxt.setText(new StringBuilder()
                 .append(label).append(" ")
-                .append(MyApplication.stringifyDate(curYear, curMonth, curDay)));
+                .append(app.getCurDateString()));
 
         updateCategories();
     }
@@ -168,19 +165,19 @@ public class MainActivity extends ActionBarActivity {
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case DATE_DIALOG_ID:
+                Calendar curDate = app.getCurDate();
+
                 // set date picker as current date
                 return new DatePickerDialog(this, new DatePickerDialog.OnDateSetListener() {
 
                     // when dialog box is closed, below method will be called.
                     public void onDateSet(DatePicker view, int selectedYear,
                                           int selectedMonth, int selectedDay) {
-                        curYear = selectedYear;
-                        curMonth = selectedMonth;
-                        curDay = selectedDay;
+                        app.setCurDate(selectedYear, selectedMonth, selectedDay);
 
                         updateDate();
                     }
-                }, curYear, curMonth, curDay);
+                }, curDate.get(Calendar.YEAR), curDate.get(Calendar.MONTH), curDate.get(Calendar.DAY_OF_MONTH));
         }
         return null;
     }

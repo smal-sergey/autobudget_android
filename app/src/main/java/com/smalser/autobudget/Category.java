@@ -12,12 +12,13 @@ public enum Category {
     TRANSPORT,
     CLOTHES,
     RELAX,
+    PHARMACY,
     OTHER;
 
     /**
      * @return set of patterns
      */
-    public String resolve() {
+    private String defaultTemplates() {
         String result;
         switch (this) {
             case QIWI:
@@ -45,6 +46,9 @@ public enum Category {
             case RELAX:
                 result = "(.*CINEMA.*)|(WWW.KINOHOD.RU MOSCOW)|(KINOBAR)";
                 break;
+            case PHARMACY:
+                result = "(.*Pharmacy.*)";
+                break;
             case OTHER:
                 result = ".*";
                 break;
@@ -61,7 +65,7 @@ public enum Category {
 
     public String loadTemplate(Context context){
         SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
-        return prefs.getString(toString(), resolve());
+        return prefs.getString(toString(), defaultTemplates());
     }
 
     public void saveTemplate(Context context, String template){
@@ -87,6 +91,8 @@ public enum Category {
                 return R.string.txt_clothes;
             case RELAX:
                 return R.string.txt_relax;
+            case PHARMACY:
+                return R.string.txt_pharmacy;
             case OTHER:
                 return R.string.txt_other;
             default:

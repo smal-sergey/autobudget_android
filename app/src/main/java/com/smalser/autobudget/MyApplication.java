@@ -2,18 +2,44 @@ package com.smalser.autobudget;
 
 import android.app.Application;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class MyApplication extends Application {
-    private List<Message> filteredMessages;
+    private int curYear;
+    private int curMonth;
+    private int curDay;
+    private StatisticCollector collector;
     private Message editedMessage;
 
-    public List<Message> getFilteredMessages() {
-        return filteredMessages;
+    public List<Message> getFilteredMessages(Category category) {
+        return collector.filterMessages(category, getCurDate());
     }
 
-    public void setFilteredMessages(List<Message> filteredMessages) {
-        this.filteredMessages = filteredMessages;
+    public void setStatisticCollector(StatisticCollector collector) {
+        this.collector = collector;
+    }
+
+    public void setCurDate(int curYear, int curMonth, int curDay) {
+        this.curYear = curYear;
+        this.curMonth = curMonth;
+        this.curDay = curDay;
+    }
+
+    public Calendar getCurDate() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.YEAR, curYear);
+        cal.set(Calendar.MONTH, curMonth);
+        cal.set(Calendar.DAY_OF_MONTH, curDay);
+        return cal;
+    }
+
+    public Calendar getMinDate() {
+        return collector.getMinDate();
+    }
+
+    public List<CategoryTotal> getAllCategories() {
+        return collector.getAllCategories(getCurDate());
     }
 
     public Message getEditedMessage() {
@@ -24,7 +50,14 @@ public class MyApplication extends Application {
         this.editedMessage = editedMessage;
     }
 
-    public static String stringifyDate(int year, int month, int day){
+    public String getCurDateString() {
+        return MyApplication.stringifyDate(getCurDate());
+    }
+
+    public static String stringifyDate(Calendar c) {
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
         return stringify(day) + "-" + stringify(month + 1) + "-" + year + " ";
     }
 

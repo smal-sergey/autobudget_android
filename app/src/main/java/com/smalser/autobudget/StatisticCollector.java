@@ -1,35 +1,45 @@
 package com.smalser.autobudget;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class StatisticCollector {
     private static final String STATISTIC_COLLECTOR_TAG = "Statistic_collector_log";
 
-    private final Map<Category, List<Message>> categorized;
+    private List<? extends Message> messages;
+    private final Context context;
 
-    public StatisticCollector(Collection<Message> messages) {
-        categorized = new HashMap<>();
-        categorize(messages);
+    public StatisticCollector(List<? extends Message> messages, Context context) {
+        this.messages = messages;
+        this.context = context;
     }
 
-    private void categorize(Collection<Message> messages) {
+    private Map<Category, List<Message>> categorize() {
+        Map<Category, List<Message>> categorized = new HashMap<>();
+        List<Message> uncategorized = new ArrayList<>(messages);
+
         //values returns OTHER at the end, when everything already categorized!
         for (Category category : Category.values()) {
-            Pattern p = Pattern.compile(category.resolve());
-
             List<Message> matched = new ArrayList<>();
             categorized.put(category, matched);
 
-            for (Message msg : messages) {
+            Pattern p;
+            try {
+                p = Pattern.compile(category.loadTemplate(context));
+            } catch (PatternSyntaxException e) {
+                continue;
+            }
+
+            for (Message msg : uncategorized) {
                 Matcher m = p.matcher(msg.source);
                 if (m.matches()) {
                     matched.add(msg);
@@ -37,13 +47,15 @@ public class StatisticCollector {
                 }
             }
 
-            messages.removeAll(matched);
+            uncategorized.removeAll(matched);
         }
+        return categorized;
     }
 
     public Double getCategory(Category category, Calendar fromDate) {
         double result = 0;
 
+        Map<Category, List<Message>> categorized = categorize();
         for (Message msg : categorized.get(category)) {
             if (fromDate.before(msg.date)) {
                 result += msg.purchase;
@@ -70,8 +82,9 @@ public class StatisticCollector {
         return stat;
     }
 
-    private List<Message> filterMessages(Category category, Calendar fromDate) {
+    public List<Message> filterMessages(Category category, Calendar fromDate) {
         List<Message> filtered = new ArrayList<>();
+        Map<Category, List<Message>> categorized = categorize();
         for (Message msg : categorized.get(category)) {
             if (fromDate.before(msg.date)) {
                 filtered.add(msg);
@@ -82,12 +95,9 @@ public class StatisticCollector {
 
     public Calendar getMinDate() {
         Calendar minDate = Calendar.getInstance();
-        for (Category category : categorized.keySet()) {
-            List<Message> messages = categorized.get(category);
-            for (Message msg : messages) {
-                if(minDate.after(msg.date)){
-                    minDate.setTimeInMillis(msg.date.getTimeInMillis());
-                }
+        for (Message msg : messages) {
+            if (minDate.after(msg.date)) {
+                minDate.setTimeInMillis(msg.date.getTimeInMillis());
             }
         }
         return minDate;
