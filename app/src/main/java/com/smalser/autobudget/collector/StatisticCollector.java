@@ -1,7 +1,11 @@
-package com.smalser.autobudget;
+package com.smalser.autobudget.collector;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.smalser.autobudget.Category;
+import com.smalser.autobudget.Message;
+import com.smalser.autobudget.main.CategoryTotal;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,8 +74,10 @@ public class StatisticCollector {
 
     public List<CategoryTotal> getAllCategories(Calendar fromDate) {
         List<CategoryTotal> stat = new ArrayList<>();
+        Map<Category, List<Message>> categorized = categorize();
+
         for (Category category : Category.values()) {
-            List<Message> messages = filterMessages(category, fromDate);
+            List<Message> messages = filterMessages(categorized.get(category), fromDate);
 
             double result = 0.0;
             for (Message msg : messages) {
@@ -83,9 +89,13 @@ public class StatisticCollector {
     }
 
     public List<Message> filterMessages(Category category, Calendar fromDate) {
-        List<Message> filtered = new ArrayList<>();
         Map<Category, List<Message>> categorized = categorize();
-        for (Message msg : categorized.get(category)) {
+        return filterMessages(categorized.get(category), fromDate);
+    }
+
+    private List<Message> filterMessages(List<Message> messages, Calendar fromDate) {
+        List<Message> filtered = new ArrayList<>();
+        for (Message msg : messages) {
             if (fromDate.before(msg.date)) {
                 filtered.add(msg);
             }

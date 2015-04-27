@@ -2,6 +2,8 @@ package com.smalser.autobudget;
 
 import android.app.Application;
 
+import com.smalser.autobudget.collector.StatisticCollector;
+
 import java.util.Calendar;
 import java.util.List;
 
@@ -36,10 +38,6 @@ public class MyApplication extends Application {
 
     public Calendar getMinDate() {
         return collector.getMinDate();
-    }
-
-    public List<CategoryTotal> getAllCategories() {
-        return collector.getAllCategories(getCurDate());
     }
 
     public Message getEditedMessage() {

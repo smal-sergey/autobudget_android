@@ -1,6 +1,8 @@
-package com.smalser.autobudget;
+package com.smalser.autobudget.collector;
 
 import android.util.Log;
+
+import com.smalser.autobudget.Message;
 
 import java.text.ParseException;
 import java.util.ArrayList;

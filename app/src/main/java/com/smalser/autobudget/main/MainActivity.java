@@ -1,4 +1,4 @@
-package com.smalser.autobudget;
+package com.smalser.autobudget.main;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -18,6 +18,12 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.smalser.autobudget.collector.GetAllCategoriesAsync;
+import com.smalser.autobudget.Message;
+import com.smalser.autobudget.MyApplication;
+import com.smalser.autobudget.R;
+import com.smalser.autobudget.collector.SmsParser;
+import com.smalser.autobudget.collector.StatisticCollector;
 import com.smalser.autobudget.report.CategoryReportActivity;
 
 import java.util.ArrayList;
@@ -31,9 +37,11 @@ public class MainActivity extends ActionBarActivity {
 
     TextView mDateFilterTxt;
     ListView mCategories;
+    View mLoadingPanel;
 
     private static final int DATE_DIALOG_ID = 999;
     private MyApplication app;
+    private List<Message> allMessages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +49,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         app = (MyApplication) getApplication();
+
+        mLoadingPanel = findViewById(R.id.loadingPanel);
 
         readAllMessages();
 
@@ -130,8 +140,8 @@ public class MainActivity extends ActionBarActivity {
         Cursor c = cr.query(inboxURI, reqCols, reqSelection, reqSelectionArgs, null);
 
         List<String> messages = read(c);
-        List<Message> results = smsParser.parse(messages);
-        app.setStatisticCollector(new StatisticCollector(results, this));
+        allMessages = smsParser.parse(messages);
+        app.setStatisticCollector(new StatisticCollector(allMessages, this));
     }
 
     private List<String> read(Cursor c) {
@@ -144,11 +154,12 @@ public class MainActivity extends ActionBarActivity {
 
     private void updateCategories() {
         //todo categories can be grouped: use ExpandableListView
-        List<CategoryTotal> statistic = app.getAllCategories();
         ArrayAdapter<CategoryTotal> msgAdapter = new CategoryTotalAdapter(MainActivity.this, R.layout.category_total_row,
-                statistic);
-
+                new ArrayList<CategoryTotal>());
         mCategories.setAdapter(msgAdapter);
+
+        GetAllCategoriesAsync getAllTask = new GetAllCategoriesAsync(allMessages, mLoadingPanel, msgAdapter);
+        getAllTask.execute(app.getCurDate());
     }
 
     private void updateDate() {

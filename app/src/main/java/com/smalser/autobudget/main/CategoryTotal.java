@@ -1,4 +1,7 @@
-package com.smalser.autobudget;
+package com.smalser.autobudget.main;
+
+import com.smalser.autobudget.Category;
+import com.smalser.autobudget.Message;
 
 import java.util.List;
 
