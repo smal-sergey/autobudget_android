@@ -49,17 +49,6 @@ public class MyApplication extends Application {
     }
 
     public String getCurDateString() {
-        return MyApplication.stringifyDate(getCurDate());
-    }
-
-    public static String stringifyDate(Calendar c) {
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
-        return stringify(day) + "-" + stringify(month + 1) + "-" + year + " ";
-    }
-
-    private static String stringify(Integer value) {
-        return value < 10 ? "0" + value.toString() : value.toString();
+        return Utils.stringifyDate(getCurDate());
     }
 }

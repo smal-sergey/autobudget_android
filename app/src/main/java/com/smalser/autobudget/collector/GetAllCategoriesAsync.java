@@ -3,9 +3,11 @@ package com.smalser.autobudget.collector;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
+import com.smalser.autobudget.Utils;
 import com.smalser.autobudget.main.CategoryTotal;
 
 import java.util.ArrayList;
@@ -22,12 +24,14 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
     private final List<? extends Message> messages;
     private final View loadingIndicator;
     private ArrayAdapter<CategoryTotal> listAdapter;
+    private TextView mTotalTxt;
 
     public GetAllCategoriesAsync(List<? extends Message> messages, View loadingIndicator,
-                                 ArrayAdapter<CategoryTotal> listAdapter) {
+                                 ArrayAdapter<CategoryTotal> listAdapter, TextView mTotalTxt) {
         this.messages = messages;
         this.loadingIndicator = loadingIndicator;
         this.listAdapter = listAdapter;
+        this.mTotalTxt = mTotalTxt;
     }
 
     private Map<Category, List<Message>> categorize() {
@@ -70,9 +74,13 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
         super.onPostExecute(categoryTotals);
         loadingIndicator.setVisibility(View.GONE);
         listAdapter.clear();
+
+        double sum = 0;
         for (CategoryTotal categoryTotal : categoryTotals) {
             listAdapter.add(categoryTotal);
+            sum += categoryTotal.result;
         }
+        mTotalTxt.setText(Utils.getFormattedCash(sum));
     }
 
     @Override
@@ -87,7 +95,7 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
             for (Message msg : messages) {
                 result += msg.purchase;
             }
-            stat.add(new CategoryTotal(messages, (Math.round(result * 100) + 0.0) / 100, category));
+            stat.add(new CategoryTotal(messages, Utils.roundDouble(result), category));
         }
         return stat;
     }

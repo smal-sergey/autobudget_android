@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.smalser.autobudget.R;
+import com.smalser.autobudget.Utils;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
             rowView = layoutInflater.inflate(R.layout.category_total_row, parent, false);
 
             TextView category = (TextView) rowView.findViewById(R.id.lblCategory);
-            TextView total = (TextView) rowView.findViewById(R.id.lblTotal);
+            TextView total = (TextView) rowView.findViewById(R.id.lblCategoryTotal);
             TextView count = (TextView) rowView.findViewById(R.id.lblCount);
 
             rowView.setTag(new ViewHolder(category, total, count));
@@ -35,8 +36,8 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
         CategoryTotal ct = this.getItem(position);
 
         holder.category.setText(ct.category.lblId());
-        holder.total.setText("" + ct.result);
-        holder.count.setText("" + ct.messages.size());
+        holder.total.setText(Utils.getFormattedCash(ct.result));
+        holder.count.setText("(" + ct.messages.size() + ")");
 
         return rowView;
     }

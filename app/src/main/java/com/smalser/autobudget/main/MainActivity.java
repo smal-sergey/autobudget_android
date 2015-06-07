@@ -35,6 +35,7 @@ public class MainActivity extends ActionBarActivity {
 
     private final SmsParser smsParser = new SmsParser();
 
+    TextView mTotalTxt;
     TextView mDateFilterTxt;
     ListView mCategories;
     View mLoadingPanel;
@@ -66,7 +67,9 @@ public class MainActivity extends ActionBarActivity {
             }
         });
 
-        mDateFilterTxt = (TextView) findViewById(R.id.lblDateFilter);
+        mTotalTxt = (TextView) findViewById(R.id.lblValueTotal);
+
+        mDateFilterTxt = (TextView) findViewById(R.id.lblValueDateFilter);
         mDateFilterTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,17 +161,12 @@ public class MainActivity extends ActionBarActivity {
                 new ArrayList<CategoryTotal>());
         mCategories.setAdapter(msgAdapter);
 
-        GetAllCategoriesAsync getAllTask = new GetAllCategoriesAsync(allMessages, mLoadingPanel, msgAdapter);
+        GetAllCategoriesAsync getAllTask = new GetAllCategoriesAsync(allMessages, mLoadingPanel, msgAdapter, mTotalTxt);
         getAllTask.execute(app.getCurDate());
     }
 
     private void updateDate() {
-        String label = getResources().getString(R.string.txt_from_date);
-
-        mDateFilterTxt.setText(new StringBuilder()
-                .append(label).append(" ")
-                .append(app.getCurDateString()));
-
+        mDateFilterTxt.setText(app.getCurDateString());
         updateCategories();
     }
 

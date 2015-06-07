@@ -15,6 +15,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
             android:textAppearance="?android:attr/textAppearanceLarge"/>
 
         <TextView
@@ -25,13 +27,44 @@
             android:layout_alignParentStart="true"
             android:layout_below="@id/spinnerDateFilter"
             android:text="@string/txt_from_date"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/lblValueDateFilter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/lblDateFilter"
+            android:layout_toRightOf="@id/lblDateFilter"
+            android:layout_alignBaseline="@id/lblDateFilter"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/lblCategoryTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lblDateFilter"
+            android:layout_alignStart="@id/lblDateFilter"
+            android:layout_below="@id/lblDateFilter"
+            android:text="@string/txt_total"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        <TextView
+            android:id="@+id/lblValueTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/lblValueDateFilter"
+            android:layout_alignStart="@id/lblValueDateFilter"
+            android:layout_alignBaseline="@id/lblCategoryTotal"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <RelativeLayout
             android:id="@+id/loadingPanel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_margin="10dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true">

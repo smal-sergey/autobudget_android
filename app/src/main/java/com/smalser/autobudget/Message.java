@@ -35,7 +35,7 @@ public class Message {
     }
 
     public String getDateString() {
-        return MyApplication.stringifyDate(date);
+        return Utils.stringifyDate(date);
     }
 
     public Category getCategory() {

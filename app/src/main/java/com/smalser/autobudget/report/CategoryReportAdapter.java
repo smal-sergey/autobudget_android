@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.R;
+import com.smalser.autobudget.Utils;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class CategoryReportAdapter extends ArrayAdapter<Message> {
 
         holder.source.setText(msg.source);
         holder.date.setText(msg.getDateString());
-        holder.purchase.setText("" + msg.purchase);
+        holder.purchase.setText(Utils.getFormattedCash(msg.purchase));
 
         return rowView;
     }
