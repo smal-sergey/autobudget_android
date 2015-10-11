@@ -18,22 +18,29 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.smalser.autobudget.collector.GetAllCategoriesAsync;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
+import com.smalser.autobudget.collector.GetAllCategoriesAsync;
+import com.smalser.autobudget.collector.MessageCompiler;
 import com.smalser.autobudget.collector.SmsParser;
 import com.smalser.autobudget.collector.StatisticCollector;
 import com.smalser.autobudget.report.CategoryReportActivity;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class MainActivity extends ActionBarActivity {
 
-    private final SmsParser smsParser = new SmsParser();
+    private final SmsParser smsParser = initSmsParser();
 
     TextView mTotalTxt;
     TextView mDateFilterTxt;
@@ -129,12 +136,64 @@ public class MainActivity extends ActionBarActivity {
         updateCategories();
     }
 
+    private SmsParser initSmsParser() {
+        //let it be static and predefined list of sources for now
+        Map<Pattern, MessageCompiler> patterns = new HashMap<>();
+
+        final SimpleDateFormat citiDateFormat = new SimpleDateFormat("dd/MM/yy");
+        MessageCompiler citiCompiler = new MessageCompiler() {
+            @Override
+            public Message getMessage(Matcher m) throws ParseException {
+                String fullMessage = m.group(0);
+                Double purchase = Double.parseDouble(m.group(1));
+                String source = m.group(2);
+                Calendar date = Calendar.getInstance();
+                date.setTime(citiDateFormat.parse(m.group(3)));
+
+                Double balance = Double.parseDouble(m.group(4));
+                return new Message(fullMessage, purchase, source, date, balance);
+            }
+        };
+
+        String citiPatternWithdraw = "Spisanie:? (\\d+\\.\\d+).*\\s*Operaciya:? ([\\w\\d ]+[\\w\\d]).*\\s*Data:? (\\d\\d/\\d\\d/\\d\\d).*\\s*Balans:? (\\d+\\.\\d+) .*";
+        patterns.put(Pattern.compile(citiPatternWithdraw), citiCompiler);
+
+        String citiPatternBuy = "Pokupka:? (\\d+\\.\\d+).*\\s*Torgovaya tochka:? ([\\w\\d\\.\"& ]+[\\w\\d]).*\\s*Data:? (\\d\\d/\\d\\d/\\d\\d).*\\s*Balans:? (\\d+\\.\\d+) .*";
+        patterns.put(Pattern.compile(citiPatternBuy), citiCompiler);
+
+        final SimpleDateFormat raifDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        MessageCompiler raifCompiler = new MessageCompiler() {
+            @Override
+            public Message getMessage(Matcher m) throws ParseException {
+                String fullMessage = m.group(0);
+                String source = m.group(1);
+                Double purchase = Double.parseDouble(m.group(2));
+                Calendar date = Calendar.getInstance();
+                date.setTime(raifDateFormat.parse(m.group(3)));
+
+                Double balance = Double.parseDouble(m.group(4));
+                return new Message(fullMessage, purchase, source, date, balance);
+            }
+        };
+
+        String raifPatternBuy = ".*Pokupka:? (.+?);\\s*(\\d+\\.\\d+) RUR;\\s*Data:? (\\d\\d/\\d\\d/\\d\\d\\d\\d);\\s*Dostupny Ostatok: (\\d+\\.\\d+) RUR.*\\s*.*";
+        patterns.put(Pattern.compile(raifPatternBuy), raifCompiler);
+
+        String raifPatternOperation = ".*Provedena operacija:? (.+?);\\s*(\\d+\\.\\d+) RUR;\\s*Data:? (\\d\\d/\\d\\d/\\d\\d\\d\\d);\\s*Dostupny Ostatok: (\\d+\\.\\d+) RUR.*\\s*.*";
+        patterns.put(Pattern.compile(raifPatternOperation), raifCompiler);
+
+        String raifPatternWithdraw = ".*Snyatie nalichnih:? (.+?);\\s*(\\d+\\.\\d+) RUR;\\s*Data:? (\\d\\d/\\d\\d/\\d\\d\\d\\d);\\s*Dostupny Ostatok: (\\d+\\.\\d+) RUR.*\\s*.*";
+        patterns.put(Pattern.compile(raifPatternWithdraw), raifCompiler);
+
+        return new SmsParser(patterns);
+    }
+
     private void readAllMessages() {
         Uri inboxURI = Uri.parse("content://sms/inbox");
 
         String[] reqCols = new String[]{"_id", "address", "body"};
-        String reqSelection = "address = ?";
-        String[] reqSelectionArgs = new String[]{"Citialert"};
+        String reqSelection = "address in (?, ?)";
+        String[] reqSelectionArgs = new String[]{"Citialert", "Raiffeisen"};
 
         // Get Content Resolver object, which will deal with Content Provider
         ContentResolver cr = getContentResolver();
