@@ -6,6 +6,6 @@ import java.text.ParseException;
 import java.util.regex.Matcher;
 
 public interface MessageCompiler {
-    Message getMessage(Matcher m) throws ParseException;
+    Message getMessage(String id, Matcher m) throws ParseException;
 
 }

@@ -21,10 +21,13 @@ public class SmsParser {
     }
 
     //todo make it in separate thread
-    public List<Message> parse(List<String> messages) {
+    public List<Message> parse(Map<String, String> id2message) {
         List<Message> result = new ArrayList<>();
         Map<Matcher, MessageCompiler> matchers = new HashMap<>();
-        for (String msg : messages) {
+        for (Map.Entry<String, String> msgEntry : id2message.entrySet()) {
+            String id = msgEntry.getKey();
+            String msg = msgEntry.getValue();
+
             for (Map.Entry<Pattern, MessageCompiler> entry : msgPatterns.entrySet()) {
                 matchers.put(entry.getKey().matcher(msg), entry.getValue());
             }
@@ -34,7 +37,7 @@ public class SmsParser {
                 for (Matcher matcher : matchers.keySet()) {
                     MessageCompiler compiler = matchers.get(matcher);
                     if (matcher.matches()) {
-                        result.add(compiler.getMessage(matcher));
+                        result.add(compiler.getMessage(id, matcher));
                         matched = true;
                         break;
                     }

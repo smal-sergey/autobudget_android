@@ -11,6 +11,7 @@ public class MyApplication extends Application {
     private int curYear;
     private int curMonth;
     private int curDay;
+
     private StatisticCollector collector;
     private Message editedMessage;
 
@@ -20,6 +21,10 @@ public class MyApplication extends Application {
 
     public void setStatisticCollector(StatisticCollector collector) {
         this.collector = collector;
+    }
+
+    public StatisticCollector getStatisticCollector() {
+        return collector;
     }
 
     public void setCurDate(int curYear, int curMonth, int curDay) {

@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
 
 
 public class MainActivity extends ActionBarActivity {
+    public static final String CATEGORY_PREFS = "category_prefs";
+    public static final String MESSAGE_PREFS = "message_prefs";
 
     private final SmsParser smsParser = initSmsParser();
 
@@ -143,7 +145,7 @@ public class MainActivity extends ActionBarActivity {
         final SimpleDateFormat citiDateFormat = new SimpleDateFormat("dd/MM/yy");
         MessageCompiler citiCompiler = new MessageCompiler() {
             @Override
-            public Message getMessage(Matcher m) throws ParseException {
+            public Message getMessage(String id, Matcher m) throws ParseException {
                 String fullMessage = m.group(0);
                 Double purchase = Double.parseDouble(m.group(1));
                 String source = m.group(2);
@@ -151,7 +153,7 @@ public class MainActivity extends ActionBarActivity {
                 date.setTime(citiDateFormat.parse(m.group(3)));
 
                 Double balance = Double.parseDouble(m.group(4));
-                return new Message(fullMessage, purchase, source, date, balance);
+                return new Message(id, fullMessage, purchase, source, date, balance);
             }
         };
 
@@ -164,7 +166,7 @@ public class MainActivity extends ActionBarActivity {
         final SimpleDateFormat raifDateFormat = new SimpleDateFormat("dd/MM/yyyy");
         MessageCompiler raifCompiler = new MessageCompiler() {
             @Override
-            public Message getMessage(Matcher m) throws ParseException {
+            public Message getMessage(String id, Matcher m) throws ParseException {
                 String fullMessage = m.group(0);
                 String source = m.group(1);
                 Double purchase = Double.parseDouble(m.group(2));
@@ -172,7 +174,7 @@ public class MainActivity extends ActionBarActivity {
                 date.setTime(raifDateFormat.parse(m.group(3)));
 
                 Double balance = Double.parseDouble(m.group(4));
-                return new Message(fullMessage, purchase, source, date, balance);
+                return new Message(id, fullMessage, purchase, source, date, balance);
             }
         };
 
@@ -201,15 +203,15 @@ public class MainActivity extends ActionBarActivity {
         // Fetch Inbox SMS Message from Built-in Content Provider
         Cursor c = cr.query(inboxURI, reqCols, reqSelection, reqSelectionArgs, null);
 
-        List<String> messages = read(c);
+        Map<String, String> messages = read(c);
         allMessages = smsParser.parse(messages);
         app.setStatisticCollector(new StatisticCollector(allMessages, this));
     }
 
-    private List<String> read(Cursor c) {
-        List<String> messages = new ArrayList<>();
+    private Map<String, String> read(Cursor c) {
+        Map<String, String> messages = new HashMap<>();
         while (c.moveToNext()) {
-            messages.add(c.getString(2));
+            messages.put(c.getString(0), c.getString(2));
         }
         return messages;
     }
@@ -220,7 +222,7 @@ public class MainActivity extends ActionBarActivity {
                 new ArrayList<CategoryTotal>());
         mCategories.setAdapter(msgAdapter);
 
-        GetAllCategoriesAsync getAllTask = new GetAllCategoriesAsync(allMessages, mLoadingPanel, msgAdapter, mTotalTxt);
+        GetAllCategoriesAsync getAllTask = new GetAllCategoriesAsync(mLoadingPanel, msgAdapter, mTotalTxt, app.getStatisticCollector());
         getAllTask.execute(app.getCurDate());
     }
 

@@ -24,6 +24,7 @@
 
         <activity android:name=".report.CategoryReportActivity"/>
         <activity android:name=".edit.EditMessageActivity"/>
+        <activity android:name=".edit.ChooseCategoryActivity"/>
     </application>
 
 </manifest>

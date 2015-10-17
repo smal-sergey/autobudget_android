@@ -1,17 +1,21 @@
 package com.smalser.autobudget.collector;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.main.CategoryTotal;
+import com.smalser.autobudget.main.MainActivity;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -19,23 +23,35 @@ import java.util.regex.PatternSyntaxException;
 public class StatisticCollector {
     private static final String STATISTIC_COLLECTOR_TAG = "Statistic_collector_log";
 
+    private Map<String, Message> id2message;
     private List<? extends Message> messages;
     private final Context context;
 
     public StatisticCollector(List<? extends Message> messages, Context context) {
         this.messages = messages;
         this.context = context;
+
+        this.id2message = new HashMap<>();
+        for (Message msg : messages) {
+            id2message.put(msg.id, msg);
+        }
     }
 
     private Map<Category, List<Message>> categorize() {
-        Map<Category, List<Message>> categorized = new HashMap<>();
+        applyPatterns();
+
+        //todo make this primary source of categorization (eliminate patterns)
+        applyUserCategories();
+
+        return getCategorizedMessages();
+    }
+
+    private void applyPatterns() {
         List<Message> uncategorized = new ArrayList<>(messages);
 
         //values returns OTHER at the end, when everything already categorized!
         for (Category category : Category.values()) {
             List<Message> matched = new ArrayList<>();
-            categorized.put(category, matched);
-
             Pattern p;
             try {
                 p = Pattern.compile(category.loadTemplate(context));
@@ -53,7 +69,44 @@ public class StatisticCollector {
 
             uncategorized.removeAll(matched);
         }
-        return categorized;
+
+        for (Message msg : uncategorized) {
+            msg.setCategory(Category.OTHER);
+        }
+    }
+
+    private void applyUserCategories() {
+        SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
+
+        for (Category category : Category.values()) {
+            Set<String> sources = categoryPrefs.getStringSet(category.toString(), new HashSet<String>());
+
+            for (Message msg : this.messages) {
+                if(sources.contains(msg.source)){
+                    msg.setCategory(category);
+                }
+            }
+        }
+
+        for (String id : messagePrefs.getAll().keySet()) {
+            Category category = Category.valueOf(messagePrefs.getString(id, Category.OTHER.toString()));
+            Message msg = id2message.get(id);
+            msg.setCategory(category);
+        }
+    }
+
+    private Map<Category, List<Message>> getCategorizedMessages() {
+        Map<Category, List<Message>> categories = new HashMap<>();
+
+        for (Category category : Category.values()) {
+            categories.put(category, new ArrayList<Message>());
+        }
+
+        for (Message msg : messages) {
+            categories.get(msg.getCategory()).add(msg);
+        }
+        return categories;
     }
 
     public Double getCategory(Category category, Calendar fromDate) {
@@ -89,6 +142,7 @@ public class StatisticCollector {
     }
 
     public List<Message> filterMessages(Category category, Calendar fromDate) {
+        //can be cached
         Map<Category, List<Message>> categorized = categorize();
         return filterMessages(categorized.get(category), fromDate);
     }
@@ -111,5 +165,9 @@ public class StatisticCollector {
             }
         }
         return minDate;
+    }
+
+    public Map<String, Message> getIdToMessage() {
+        return id2message;
     }
 }

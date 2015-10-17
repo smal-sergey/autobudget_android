@@ -12,6 +12,7 @@ import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
+import com.smalser.autobudget.edit.ChooseCategoryActivity;
 import com.smalser.autobudget.edit.EditMessageActivity;
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class CategoryReportActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Message msg = (Message) parent.getItemAtPosition(position);
                 app.setEditedMessage(msg);
-                startActivity(new Intent(CategoryReportActivity.this, EditMessageActivity.class));
+                startActivity(new Intent(CategoryReportActivity.this, ChooseCategoryActivity.class));
             }
         });
     }
