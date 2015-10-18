@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
                 CategoryTotal categoryTotal = (CategoryTotal) parent.getItemAtPosition(position);
 
                 Intent intent = new Intent(MainActivity.this, CategoryReportActivity.class);
-                intent.putExtra(CategoryReportActivity.CATEGORY_EXTRA, categoryTotal.category.toString());
+                intent.putExtra(CategoryReportActivity.CATEGORY_EXTRA, categoryTotal.category.name);
                 startActivity(intent);
             }
         });

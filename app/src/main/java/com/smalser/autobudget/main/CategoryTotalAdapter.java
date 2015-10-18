@@ -35,9 +35,9 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
         ViewHolder holder = (ViewHolder) rowView.getTag();
         CategoryTotal ct = this.getItem(position);
 
-        holder.category.setText(ct.category.lblId());
+        holder.category.setText(ct.category.name);
         holder.total.setText(Utils.getFormattedCash(ct.result));
-        holder.count.setText("(" + ct.messages.size() + ")");
+        holder.count.setText(String.format("(%d)", ct.messages.size()));
 
         return rowView;
     }

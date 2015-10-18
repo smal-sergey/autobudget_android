@@ -13,7 +13,6 @@ import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
 import com.smalser.autobudget.edit.ChooseCategoryActivity;
-import com.smalser.autobudget.edit.EditMessageActivity;
 
 import java.util.List;
 
@@ -31,7 +30,7 @@ public class CategoryReportActivity extends Activity {
         category = Category.valueOf(getIntent().getStringExtra(CATEGORY_EXTRA));
 
         mCategory = (TextView) findViewById(R.id.cr_lblCategory);
-        mCategory.setText(getResources().getString(category.lblId()));
+        mCategory.setText(category.name);
         mCategoryReport = (ListView) findViewById(R.id.listCategoryReport);
 
         final MyApplication app = (MyApplication) getApplication();

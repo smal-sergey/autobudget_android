@@ -50,7 +50,7 @@ public class StatisticCollector {
         List<Message> uncategorized = new ArrayList<>(messages);
 
         //values returns OTHER at the end, when everything already categorized!
-        for (Category category : Category.values()) {
+        for (Category category : Category.allCategories()) {
             List<Message> matched = new ArrayList<>();
             Pattern p;
             try {
@@ -79,18 +79,18 @@ public class StatisticCollector {
         SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
         SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
 
-        for (Category category : Category.values()) {
-            Set<String> sources = categoryPrefs.getStringSet(category.toString(), new HashSet<String>());
+        for (Category category : Category.allCategories()) {
+            Set<String> sources = categoryPrefs.getStringSet(category.name, new HashSet<String>());
 
             for (Message msg : this.messages) {
-                if(sources.contains(msg.source)){
+                if (sources.contains(msg.source)) {
                     msg.setCategory(category);
                 }
             }
         }
 
         for (String id : messagePrefs.getAll().keySet()) {
-            Category category = Category.valueOf(messagePrefs.getString(id, Category.OTHER.toString()));
+            Category category = Category.valueOf(messagePrefs.getString(id, Category.OTHER.name));
             Message msg = id2message.get(id);
             msg.setCategory(category);
         }
@@ -99,7 +99,7 @@ public class StatisticCollector {
     private Map<Category, List<Message>> getCategorizedMessages() {
         Map<Category, List<Message>> categories = new HashMap<>();
 
-        for (Category category : Category.values()) {
+        for (Category category : Category.allCategories()) {
             categories.put(category, new ArrayList<Message>());
         }
 
@@ -117,7 +117,7 @@ public class StatisticCollector {
             if (fromDate.before(msg.date)) {
                 result += msg.purchase;
 
-                if (category == Category.OTHER) {
+                if (category.equals(Category.OTHER)) {
                     Log.i(STATISTIC_COLLECTOR_TAG, "\nSOURCE:'" + msg.source + "'; MSG: '" + msg.fullMessage + "'");
                 }
             }
@@ -129,7 +129,7 @@ public class StatisticCollector {
         List<CategoryTotal> stat = new ArrayList<>();
         Map<Category, List<Message>> categorized = categorize();
 
-        for (Category category : Category.values()) {
+        for (Category category : Category.allCategories()) {
             List<Message> messages = filterMessages(categorized.get(category), fromDate);
 
             double result = 0.0;

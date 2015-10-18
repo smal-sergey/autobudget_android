@@ -43,7 +43,7 @@ public class SmsParser {
                     }
                 }
 
-                if(!matched){
+                if (!matched) {
                     throw new ParseException("Can not parse message '" + msg + "'", 0);
                 }
             } catch (ParseException e) {

@@ -7,10 +7,10 @@ import android.text.Html;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.smalser.autobudget.Category;
@@ -18,7 +18,7 @@ import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
 
@@ -104,9 +104,8 @@ public class EditMessageActivity extends Activity {
 
         //todo spinner adapter works wrong (string resources are not used)
         Spinner spinner = (Spinner) findViewById(R.id.spinnerCategories);
-        List<Category> categories = Arrays.asList(Category.values());
-        ArrayAdapter<Category> adapter = new CategoriesAdapter(this, R.layout.spinner_layout, categories);
-        adapter.setDropDownViewResource(R.layout.spinner_layout);
+        List<Category> categories = new ArrayList<>(Category.allCategories());
+        SpinnerAdapter adapter = new CategoriesAdapter(this, categories);
         spinner.setAdapter(adapter);
         spinner.setSelection(categories.indexOf(curCategory));
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

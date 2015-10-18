@@ -1,13 +1,8 @@
 package com.smalser.autobudget;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.regex.Matcher;
 
 public class Message {
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd/MM/yy");
     public final String id;
     public final Double purchase;
     public final String source;

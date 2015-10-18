@@ -53,7 +53,7 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
     protected List<CategoryTotal> doInBackground(Calendar... fromDate) {
         List<CategoryTotal> stat = new ArrayList<>();
 
-        for (Category category : Category.values()) {
+        for (Category category : Category.allCategories()) {
             List<Message> messages = statisticCollector.filterMessages(category, fromDate[0]);
 
             double result = 0.0;
