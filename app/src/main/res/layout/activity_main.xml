@@ -1,13 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/action_bar_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#C0C0C0"
-        android:layout_marginBottom="5dp">
+        android:layout_alignParentTop="true"
+        android:background="#C0C0C0">
 
         <Spinner
             android:id="@+id/spinnerDateFilter"
@@ -17,7 +18,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"/>
+            android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
             android:id="@+id/lblDateFilter"
@@ -26,20 +27,20 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_below="@id/spinnerDateFilter"
-            android:text="@string/txt_from_date"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
+            android:text="@string/txt_from_date"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
             android:id="@+id/lblValueDateFilter"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@id/lblDateFilter"
-            android:layout_toRightOf="@id/lblDateFilter"
             android:layout_alignBaseline="@id/lblDateFilter"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/lblDateFilter"
+            android:layout_toRightOf="@id/lblDateFilter"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <TextView
@@ -56,18 +57,18 @@
             android:id="@+id/lblValueTotal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/lblCategoryTotal"
             android:layout_alignLeft="@id/lblValueDateFilter"
             android:layout_alignStart="@id/lblValueDateFilter"
-            android:layout_alignBaseline="@id/lblCategoryTotal"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <RelativeLayout
             android:id="@+id/loadingPanel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+            android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true">
+            android:layout_margin="10dp">
 
             <ProgressBar
                 android:layout_width="wrap_content"
@@ -78,8 +79,19 @@
 
     <ListView
         android:id="@+id/listCategories"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-    </ListView>
+        android:layout_above="@+id/addCategoryBtn"
+        android:layout_below="@id/action_bar_2"/>
 
-</LinearLayout>
+    <ImageButton
+        android:id="@+id/addCategoryBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@null"
+        android:contentDescription="@string/add_new_category"
+        android:src="@drawable/ic_add_circle_outline" />
+
+</RelativeLayout>

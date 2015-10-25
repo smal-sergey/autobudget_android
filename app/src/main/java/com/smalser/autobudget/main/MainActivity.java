@@ -1,8 +1,10 @@
 package com.smalser.autobudget.main;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -13,11 +15,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
@@ -39,11 +47,14 @@ import java.util.regex.Pattern;
 
 
 public class MainActivity extends ActionBarActivity {
+    private static final String MAIN_ACTIVITY_TAG = "Main_log";
+
     public static final String CATEGORY_PREFS = "category_prefs";
     public static final String MESSAGE_PREFS = "message_prefs";
 
     private final SmsParser smsParser = initSmsParser();
 
+    ImageButton mAddCategoryBtn;
     TextView mTotalTxt;
     TextView mDateFilterTxt;
     ListView mCategories;
@@ -61,15 +72,86 @@ public class MainActivity extends ActionBarActivity {
         app = (MyApplication) getApplication();
 
         mLoadingPanel = findViewById(R.id.loadingPanel);
+        mAddCategoryBtn = (ImageButton) findViewById(R.id.addCategoryBtn);
+        mAddCategoryBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final AlertDialog.Builder addCategoryDialogBuilder = new AlertDialog.Builder(MainActivity.this);
+                addCategoryDialogBuilder.setCancelable(true)
+                        .setMessage("Please Enter data")
+                        .setTitle(R.string.create_category_title)
+                        .setView(R.layout.add_category_dialog) //<-- layout containing EditText
+                        .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                            }
+                        })
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Toast.makeText(getBaseContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                final AlertDialog addCategoryDialog = addCategoryDialogBuilder.create();
+                addCategoryDialog.show();
+                Button addButton = addCategoryDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        EditText mCategoryName = (EditText) addCategoryDialog.findViewById(R.id.newCategoryName);
+                        String name = mCategoryName.getText().toString();
+                        if (Category.valueOf(name) != null) {
+                            Toast.makeText(getBaseContext(), "Category already exists", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Category.create(name);
+                            updateCategories();
+                            addCategoryDialog.dismiss();
+                        }
+                    }
+                });
+            }
+        });
 
         readAllMessages();
 
         mCategories = (ListView) findViewById(R.id.listCategories);
+        mCategories.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                int selectedPos = findSelectedPos();
+                ArrayAdapter<CategoryTotal> adapter = (ArrayAdapter) mCategories.getAdapter();
+                CategoryTotal category = adapter.getItem(position);
+
+                if (position == selectedPos) {
+                    category.selected = false;
+                } else {
+                    if (selectedPos != -1) {
+                        CategoryTotal selectedCategory = adapter.getItem(selectedPos);
+                        selectedCategory.selected = false;
+                    }
+                    category.selected = true;
+                }
+
+                adapter.notifyDataSetChanged();
+                return true;
+            }
+
+            private int findSelectedPos() {
+                ListAdapter adapter = mCategories.getAdapter();
+                for (int i = 0; i < adapter.getCount(); i++) {
+                    CategoryTotal category = (CategoryTotal) adapter.getItem(i);
+                    if (category.selected) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+        });
+
         mCategories.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CategoryTotal categoryTotal = (CategoryTotal) parent.getItemAtPosition(position);
-
                 Intent intent = new Intent(MainActivity.this, CategoryReportActivity.class);
                 intent.putExtra(CategoryReportActivity.CATEGORY_EXTRA, categoryTotal.category.name);
                 startActivity(intent);

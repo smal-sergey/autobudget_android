@@ -85,9 +85,13 @@ public class Category {
         return category;
     }
 
+    public boolean delete() {
+        return allCategories().remove(this);
+    }
+
     public static Category valueOf(String name) {
         Category category = categories.get(name);
-        if(category == null){
+        if (category == null) {
             Log.e(CATEGORY_TAG, "Trying to use not existing category '" + name + "'");
         }
         return category;

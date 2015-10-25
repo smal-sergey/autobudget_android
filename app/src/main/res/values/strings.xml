@@ -23,6 +23,11 @@
     <string name="txt_change_category_to">Change to:</string>
     <string name="txt_only_this_msg">Only this message</string>
     <string name="txt_all_from_source">All from this source</string>
+    <string name="add_new_category">Add new category</string>
+    <string name="add">Add</string>
+    <string name="delete_category">Delete category</string>
+    <string name="create_category_title">Create category</string>
+    <string name="cancel">Cancel</string>
     <string-array name="date_filter_array">
         <item>Last week</item>
         <item>Last month</item>

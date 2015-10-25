@@ -40,10 +40,32 @@ public class StatisticCollector {
     private Map<Category, List<Message>> categorize() {
         applyPatterns();
 
+//        cleanUp();
+
         //todo make this primary source of categorization (eliminate patterns)
         applyUserCategories();
 
         return getCategorizedMessages();
+    }
+
+    private void cleanUp() {
+        SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
+        SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
+
+        for (String id : categoryPrefs.getAll().keySet()) {
+            Category category = Category.valueOf(id);
+            if (category == null) {
+                categoryPrefs.edit().remove(id).apply();
+            }
+        }
+
+        for (String id : messagePrefs.getAll().keySet()) {
+            String categoryName = messagePrefs.getString(id, Category.OTHER.name);
+            Category category = Category.valueOf(categoryName);
+            if (category == null) {
+                messagePrefs.edit().remove(id).apply();
+            }
+        }
     }
 
     private void applyPatterns() {
