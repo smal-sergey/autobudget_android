@@ -12,6 +12,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
@@ -62,7 +63,7 @@ public class ChooseCategoryActivity extends Activity {
 
         //todo spinner adapter works wrong (string resources are not used)
         Spinner spinner = (Spinner) findViewById(R.id.spinnerCategories);
-        List<Category> categories = new ArrayList<>(Category.allCategories());
+        List<Category> categories = new ArrayList<>(CategoriesRepository.allCategories());
         SpinnerAdapter adapter = new CategoriesAdapter(this, categories);
         spinner.setAdapter(adapter);
         spinner.setSelection(categories.indexOf(curCategory));

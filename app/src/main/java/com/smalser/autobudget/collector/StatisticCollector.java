@@ -16,9 +16,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
+
+import static com.smalser.autobudget.CategoriesRepository.OTHER;
+import static com.smalser.autobudget.CategoriesRepository.allCategories;
+import static com.smalser.autobudget.CategoriesRepository.valueOf;
 
 public class StatisticCollector {
     private static final String STATISTIC_COLLECTOR_TAG = "Statistic_collector_log";
@@ -38,7 +39,7 @@ public class StatisticCollector {
     }
 
     private Map<Category, List<Message>> categorize() {
-        applyPatterns();
+//        applyPatterns();
 
 //        cleanUp();
 
@@ -53,55 +54,55 @@ public class StatisticCollector {
         SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
 
         for (String id : categoryPrefs.getAll().keySet()) {
-            Category category = Category.valueOf(id);
+            Category category = valueOf(id);
             if (category == null) {
                 categoryPrefs.edit().remove(id).apply();
             }
         }
 
         for (String id : messagePrefs.getAll().keySet()) {
-            String categoryName = messagePrefs.getString(id, Category.OTHER.name);
-            Category category = Category.valueOf(categoryName);
+            String categoryName = messagePrefs.getString(id, OTHER.name);
+            Category category = valueOf(categoryName);
             if (category == null) {
                 messagePrefs.edit().remove(id).apply();
             }
         }
     }
 
-    private void applyPatterns() {
-        List<Message> uncategorized = new ArrayList<>(messages);
-
-        //values returns OTHER at the end, when everything already categorized!
-        for (Category category : Category.allCategories()) {
-            List<Message> matched = new ArrayList<>();
-            Pattern p;
-            try {
-                p = Pattern.compile(category.loadTemplate(context));
-            } catch (PatternSyntaxException e) {
-                continue;
-            }
-
-            for (Message msg : uncategorized) {
-                Matcher m = p.matcher(msg.source);
-                if (m.matches()) {
-                    matched.add(msg);
-                    msg.setCategory(category);
-                }
-            }
-
-            uncategorized.removeAll(matched);
-        }
-
-        for (Message msg : uncategorized) {
-            msg.setCategory(Category.OTHER);
-        }
-    }
+//    private void applyPatterns() {
+//        List<Message> uncategorized = new ArrayList<>(messages);
+//
+//        //values returns OTHER at the end, when everything already categorized!
+//        for (Category category : allCategories()) {
+//            List<Message> matched = new ArrayList<>();
+//            Pattern p;
+//            try {
+//                p = Pattern.compile(loadTemplate(context, category));
+//            } catch (PatternSyntaxException e) {
+//                continue;
+//            }
+//
+//            for (Message msg : uncategorized) {
+//                Matcher m = p.matcher(msg.source);
+//                if (m.matches()) {
+//                    matched.add(msg);
+//                    msg.setCategory(category);
+//                }
+//            }
+//
+//            uncategorized.removeAll(matched);
+//        }
+//
+//        for (Message msg : uncategorized) {
+//            msg.setCategory(OTHER);
+//        }
+//    }
 
     private void applyUserCategories() {
         SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
         SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
 
-        for (Category category : Category.allCategories()) {
+        for (Category category : allCategories()) {
             Set<String> sources = categoryPrefs.getStringSet(category.name, new HashSet<String>());
 
             for (Message msg : this.messages) {
@@ -112,7 +113,7 @@ public class StatisticCollector {
         }
 
         for (String id : messagePrefs.getAll().keySet()) {
-            Category category = Category.valueOf(messagePrefs.getString(id, Category.OTHER.name));
+            Category category = valueOf(messagePrefs.getString(id, OTHER.name));
             Message msg = id2message.get(id);
             msg.setCategory(category);
         }
@@ -121,7 +122,7 @@ public class StatisticCollector {
     private Map<Category, List<Message>> getCategorizedMessages() {
         Map<Category, List<Message>> categories = new HashMap<>();
 
-        for (Category category : Category.allCategories()) {
+        for (Category category : allCategories()) {
             categories.put(category, new ArrayList<Message>());
         }
 
@@ -139,7 +140,7 @@ public class StatisticCollector {
             if (fromDate.before(msg.date)) {
                 result += msg.purchase;
 
-                if (category.equals(Category.OTHER)) {
+                if (category.equals(OTHER)) {
                     Log.i(STATISTIC_COLLECTOR_TAG, "\nSOURCE:'" + msg.source + "'; MSG: '" + msg.fullMessage + "'");
                 }
             }
@@ -151,7 +152,7 @@ public class StatisticCollector {
         List<CategoryTotal> stat = new ArrayList<>();
         Map<Category, List<Message>> categorized = categorize();
 
-        for (Category category : Category.allCategories()) {
+        for (Category category : allCategories()) {
             List<Message> messages = filterMessages(categorized.get(category), fromDate);
 
             double result = 0.0;

@@ -25,7 +25,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smalser.autobudget.Category;
+import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
@@ -70,6 +70,7 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         app = (MyApplication) getApplication();
+        CategoriesRepository.initialize(getBaseContext());
 
         mLoadingPanel = findViewById(R.id.loadingPanel);
         mAddCategoryBtn = (ImageButton) findViewById(R.id.addCategoryBtn);
@@ -100,10 +101,10 @@ public class MainActivity extends ActionBarActivity {
                     public void onClick(View v) {
                         EditText mCategoryName = (EditText) addCategoryDialog.findViewById(R.id.newCategoryName);
                         String name = mCategoryName.getText().toString();
-                        if (Category.valueOf(name) != null) {
+                        if (CategoriesRepository.valueOf(name) != null) {
                             Toast.makeText(getBaseContext(), "Category already exists", Toast.LENGTH_SHORT).show();
                         } else {
-                            Category.create(name);
+                            CategoriesRepository.create(name);
                             updateCategories();
                             addCategoryDialog.dismiss();
                         }

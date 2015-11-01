@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.Utils;
@@ -53,7 +54,7 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
     protected List<CategoryTotal> doInBackground(Calendar... fromDate) {
         List<CategoryTotal> stat = new ArrayList<>();
 
-        for (Category category : Category.allCategories()) {
+        for (Category category : CategoriesRepository.allCategories()) {
             List<Message> messages = statisticCollector.filterMessages(category, fromDate[0]);
 
             double result = 0.0;

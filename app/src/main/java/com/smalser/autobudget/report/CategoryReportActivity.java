@@ -8,6 +8,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
@@ -27,7 +28,7 @@ public class CategoryReportActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_report);
 
-        category = Category.valueOf(getIntent().getStringExtra(CATEGORY_EXTRA));
+        category = CategoriesRepository.valueOf(getIntent().getStringExtra(CATEGORY_EXTRA));
 
         mCategory = (TextView) findViewById(R.id.cr_lblCategory);
         mCategory.setText(category.name);

@@ -18,6 +18,7 @@ public class Message {
         this.source = source;
         this.date = date;
         this.balance = balance;
+        this.category = CategoriesRepository.OTHER;
     }
 
     public String getDateString() {

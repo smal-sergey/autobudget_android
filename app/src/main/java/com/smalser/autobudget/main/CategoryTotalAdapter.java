@@ -10,7 +10,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.smalser.autobudget.Category;
+import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.R;
 import com.smalser.autobudget.Utils;
 
@@ -63,9 +63,8 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
                     @Override
                     public void onClick(View v) {
                         remove(ct);
-                        removeCategoryFromPrefs(ct.category, getContext());
                         Toast.makeText(getContext(), "Category " + ct.category.name + " deleted", Toast.LENGTH_SHORT).show();
-                        ct.category.delete();
+                        CategoriesRepository.delete(ct.category);
                     }
                 });
             }
@@ -80,20 +79,6 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
         holder.count.setText(String.format("(%d)", ct.messages.size()));
 
         return rowView;
-    }
-
-    private void removeCategoryFromPrefs(Category category, Context context) {
-        SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
-        SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
-
-        categoryPrefs.edit().remove(category.name).apply();
-
-        for (String id : messagePrefs.getAll().keySet()) {
-            String categoryName = messagePrefs.getString(id, Category.OTHER.name);
-            if (categoryName.equals(category.name)) {
-                messagePrefs.edit().remove(id).apply();
-            }
-        }
     }
 
     class ViewHolder {

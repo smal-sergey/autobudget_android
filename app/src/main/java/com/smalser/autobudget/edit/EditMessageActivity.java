@@ -1,6 +1,8 @@
 package com.smalser.autobudget.edit;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
@@ -13,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
+import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.Category;
 import com.smalser.autobudget.Message;
 import com.smalser.autobudget.MyApplication;
@@ -104,7 +107,7 @@ public class EditMessageActivity extends Activity {
 
         //todo spinner adapter works wrong (string resources are not used)
         Spinner spinner = (Spinner) findViewById(R.id.spinnerCategories);
-        List<Category> categories = new ArrayList<>(Category.allCategories());
+        List<Category> categories = new ArrayList<>(CategoriesRepository.allCategories());
         SpinnerAdapter adapter = new CategoriesAdapter(this, categories);
         spinner.setAdapter(adapter);
         spinner.setSelection(categories.indexOf(curCategory));
@@ -125,7 +128,7 @@ public class EditMessageActivity extends Activity {
             @Override
             public void onClick(View v) {
                 String template = mEditCategoryPattern.getText().toString();
-                curCategory.saveTemplate(EditMessageActivity.this, template);
+                saveTemplate(EditMessageActivity.this, template, curCategory);
                 finish();
             }
         });
@@ -134,7 +137,49 @@ public class EditMessageActivity extends Activity {
     }
 
     private void updateCurCategory() {
-        String template = curCategory.loadTemplate(this);
+        String template = loadTemplate(this, curCategory);
         mEditCategoryPattern.setText(template);
+    }
+
+    private static String getPrefsName() {
+        return "category_template_prefs";
+    }
+
+    public String loadTemplate(Context context, Category category) {
+        SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
+        return prefs.getString(category.name, defaultTemplates(category.name));
+    }
+
+    public void saveTemplate(Context context, String template, Category category) {
+        SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
+        prefs.edit().putString(category.name, template).apply();
+    }
+
+    private static String defaultTemplates(String name) {
+        switch (name) {
+            case "Qiwi":
+                return "(W.QIWI.RU)|(Oplata scheta)"; //todo Oplata scheta ?
+            case "Products":
+                return "(O KEY)|(OKEY)|(.*AUCHAN.*)|(MIRATORG.*)|(.*PEREKRESTOK.*)|(KOFEYNAYA KANTA.*)|(LENTA)";
+            case "Cash":
+                return "(Snyatiye nalichnykh)|(Snjatie nalichnyh)";
+            case "Sport":
+                return "(.*SPORTMASTER.*)|(.* KANT .*)";
+            case "Cafe":
+                return "(MUMU)|(ZELENAYA GORCHIORENBURG)|(.*KFC.*)|(.*MCDONALDS.*)|(.*Burger Club.*)|" +
+                        "(TASHIR)|(THE PASHA)|(DUNKIN DONUTS.*)|(GEISHA.*)|(SBARRO)|(SHOKO.*)|(CAFETERA WHITE)|(KOFETUN)";
+            case "Transport":
+                return "(WWW.RZD.RU)|(.*ORENBURG AIRLI.*)|(AEROFLOT.*)|(UZ.GOV.UA)|(RAILWAYTICKETS KYIV)";
+            case "Clothes":
+                return "(DZHULIANNA)|(.*CALZEDONIA.*)|(COLINS.*)|(MANGO)|(RESERVED.*)|(YNG)|(ZOLLA)|(RALFRINGER)|(OSTIN)|(MOHITO TTS RIO)";
+            case "Relax":
+                return "(.*CINEMA.*)|(WWW.KINOHOD.RU MOSCOW)|(KINOBAR)";
+            case "Pharmacy":
+                return "(.*Pharmacy.*)";
+            case "Other":
+                return ".*";
+            default:
+                return ".*";
+        }
     }
 }
