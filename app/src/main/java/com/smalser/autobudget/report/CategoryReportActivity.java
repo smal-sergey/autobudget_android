@@ -15,6 +15,7 @@ import com.smalser.autobudget.MyApplication;
 import com.smalser.autobudget.R;
 import com.smalser.autobudget.edit.ChooseCategoryActivity;
 
+import java.util.Collections;
 import java.util.List;
 
 public class CategoryReportActivity extends Activity {
@@ -52,6 +53,7 @@ public class CategoryReportActivity extends Activity {
 
         MyApplication app = (MyApplication) getApplication();
         List<Message> report = app.getFilteredMessages(category);
+        Collections.sort(report);
         mCategoryReport.setAdapter(new CategoryReportAdapter(CategoryReportActivity.this, R.layout.categories_report_row, report));
     }
 }

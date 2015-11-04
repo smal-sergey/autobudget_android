@@ -13,6 +13,7 @@ import com.smalser.autobudget.main.CategoryTotal;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<CategoryTotal>> {
@@ -61,8 +62,9 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
             for (Message msg : messages) {
                 result += msg.purchase;
             }
-            stat.add(new CategoryTotal(messages, Utils.roundDouble(result), category));
+            stat.add(new CategoryTotal(messages, result, category));
         }
+        Collections.sort(stat);
         return stat;
     }
 }

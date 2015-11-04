@@ -1,6 +1,8 @@
 package com.smalser.autobudget;
 
-public class Category {
+import android.support.annotation.NonNull;
+
+public class Category implements Comparable<Category> {
     public final long id;
     private String name;
 
@@ -34,5 +36,17 @@ public class Category {
     @Override
     public int hashCode() {
         return Long.valueOf(id).hashCode();
+    }
+
+    @Override
+    public int compareTo(@NonNull Category another) {
+        Category other = CategoriesRepository.OTHER;
+        if (other.equals(this)) {
+            return 1;
+        } else if (other.equals(another)) {
+            return -1;
+        } else {
+            return getName().compareTo(another.getName());
+        }
     }
 }

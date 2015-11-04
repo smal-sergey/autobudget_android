@@ -1,8 +1,10 @@
 package com.smalser.autobudget;
 
+import android.support.annotation.NonNull;
+
 import java.util.Calendar;
 
-public class Message {
+public class Message implements Comparable<Message>{
     public final String id;
     public final Double purchase;
     public final String source;
@@ -31,5 +33,10 @@ public class Message {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @Override
+    public int compareTo(@NonNull Message another) {
+        return date.compareTo(another.date);
     }
 }
