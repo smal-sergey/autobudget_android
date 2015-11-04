@@ -86,12 +86,13 @@ public class CategoriesRepository {
     }
 
     private static void removeCategoryFromPrefs(Category category) {
-        String catId = category.getIdAsString();
-        categoryNamesPrefs.edit().remove(catId).apply();
-        categoryPrefs.edit().remove(catId).apply();
+        Long catId = category.id;
+        String strCatId = category.getIdAsString();
+        categoryNamesPrefs.edit().remove(strCatId).apply();
+        categoryPrefs.edit().remove(strCatId).apply();
 
         for (String msgId : messagePrefs.getAll().keySet()) {
-            String categoryId = messagePrefs.getString(msgId, null);
+            Long categoryId = messagePrefs.getLong(msgId, -1L);
             if (catId.equals(categoryId)) {
                 messagePrefs.edit().remove(msgId).apply();
             }

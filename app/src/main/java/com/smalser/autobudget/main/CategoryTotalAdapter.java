@@ -26,9 +26,11 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
     public static final int PLAIN_CATEGORY_TYPE = 0;
     public static final int SELECTED_CATEGORY_TYPE = 1;
     public static final int NUMBER_CATEGORY_TYPES = 2;
+    private final MainActivity mainActivity;
 
-    public CategoryTotalAdapter(Context context, int resource, List<CategoryTotal> objects) {
-        super(context, resource, objects);
+    public CategoryTotalAdapter(MainActivity mainActivity, int resource, List<CategoryTotal> objects) {
+        super(mainActivity, resource, objects);
+        this.mainActivity = mainActivity;
     }
 
     @Override
@@ -72,10 +74,12 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
                         remove(ct);
                         Toast.makeText(getContext(), "Category " + ct.category.getName() + " deleted", Toast.LENGTH_SHORT).show();
                         CategoriesRepository.delete(ct.category);
+                        mainActivity.updateCategories();
                     }
                 });
             }
 
+            //todo move listener creation to Utils
             ImageButton editBtn = (ImageButton) rowView.findViewById(R.id.editCategoryBtn);
             if (editBtn != null) {
                 editBtn.setOnClickListener(new View.OnClickListener() {

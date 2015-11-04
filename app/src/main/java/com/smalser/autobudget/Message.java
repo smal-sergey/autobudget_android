@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.util.Calendar;
 
-public class Message implements Comparable<Message>{
+public class Message implements Comparable<Message> {
     public final String id;
     public final Double purchase;
     public final String source;
@@ -28,7 +28,7 @@ public class Message implements Comparable<Message>{
     }
 
     public Category getCategory() {
-        return category;
+        return CategoriesRepository.exists(category.getName()) ? category : CategoriesRepository.OTHER;
     }
 
     public void setCategory(Category category) {

@@ -61,7 +61,6 @@ public class ChooseCategoryActivity extends Activity {
 
         mBtnOk = (Button) findViewById(R.id.btnEditOk);
 
-        //todo spinner adapter works wrong (string resources are not used)
         Spinner spinner = (Spinner) findViewById(R.id.spinnerCategories);
         List<Category> categories = new ArrayList<>(CategoriesRepository.allCategories());
         SpinnerAdapter adapter = new CategoriesAdapter(this, categories);

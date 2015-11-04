@@ -41,7 +41,7 @@ public class StatisticCollector {
     private Map<Category, List<Message>> categorize() {
 //        applyPatterns();
 
-//        cleanUp();
+        cleanUp();
 
         //todo make this primary source of categorization (eliminate patterns)
         applyUserCategories();
@@ -50,11 +50,29 @@ public class StatisticCollector {
     }
 
     private void cleanUp() {
+        SharedPreferences nameCategoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_NAMES_PREFS, Context.MODE_PRIVATE);
         SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
         SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
 
         for (String id : categoryPrefs.getAll().keySet()) {
-            Category category = get(Long.valueOf(id));
+            Category category = null;
+            try {
+                category = get(Long.valueOf(id));
+            } catch (Exception e) {
+                Log.e(STATISTIC_COLLECTOR_TAG, "Error during clean up", e);
+            }
+            if (category == null) {
+                categoryPrefs.edit().remove(id).apply();
+            }
+        }
+
+        for (String id : nameCategoryPrefs.getAll().keySet()) {
+            Category category = null;
+            try {
+                category = get(Long.valueOf(id));
+            } catch (Exception e) {
+                Log.e(STATISTIC_COLLECTOR_TAG, "Error during clean up", e);
+            }
             if (category == null) {
                 categoryPrefs.edit().remove(id).apply();
             }

@@ -7,7 +7,7 @@ import com.smalser.autobudget.Message;
 
 import java.util.List;
 
-public class CategoryTotal implements Comparable<CategoryTotal>{
+public class CategoryTotal implements Comparable<CategoryTotal> {
     public final List<Message> messages;
     public final double result;
     public final Category category;
