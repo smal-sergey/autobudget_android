@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -49,6 +50,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends ActionBarActivity {
     private static final String MAIN_ACTIVITY_TAG = "Main_log";
 
+    public static final String CATEGORY_NAMES_PREFS = "category_names_prefs";
     public static final String CATEGORY_PREFS = "category_prefs";
     public static final String MESSAGE_PREFS = "message_prefs";
 
@@ -79,7 +81,7 @@ public class MainActivity extends ActionBarActivity {
             public void onClick(View v) {
                 final AlertDialog.Builder addCategoryDialogBuilder = new AlertDialog.Builder(MainActivity.this);
                 addCategoryDialogBuilder.setCancelable(true)
-                        .setMessage("Please Enter data")
+                        .setMessage(R.string.enter_category_name)
                         .setTitle(R.string.create_category_title)
                         .setView(R.layout.add_category_dialog) //<-- layout containing EditText
                         .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
@@ -101,8 +103,8 @@ public class MainActivity extends ActionBarActivity {
                     public void onClick(View v) {
                         EditText mCategoryName = (EditText) addCategoryDialog.findViewById(R.id.newCategoryName);
                         String name = mCategoryName.getText().toString();
-                        if (CategoriesRepository.valueOf(name) != null) {
-                            Toast.makeText(getBaseContext(), "Category already exists", Toast.LENGTH_SHORT).show();
+                        if (CategoriesRepository.exists(name)) {
+                            Toast.makeText(getBaseContext(), R.string.category_exists, Toast.LENGTH_SHORT).show();
                         } else {
                             CategoriesRepository.create(name);
                             updateCategories();
@@ -121,17 +123,25 @@ public class MainActivity extends ActionBarActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 int selectedPos = findSelectedPos();
                 ArrayAdapter<CategoryTotal> adapter = (ArrayAdapter) mCategories.getAdapter();
-                CategoryTotal category = adapter.getItem(position);
+                CategoryTotal ct = adapter.getItem(position);
 
                 if (position == selectedPos) {
-                    category.selected = false;
+                    ct.selected = false;
                 } else {
                     if (selectedPos != -1) {
                         CategoryTotal selectedCategory = adapter.getItem(selectedPos);
                         selectedCategory.selected = false;
                     }
-                    category.selected = true;
+
+                    if (CategoriesRepository.OTHER.equals(ct.category)) {
+                        String msgPattern = getString(R.string.txt_can_not_change_category_pattern);
+                        Toast.makeText(getBaseContext(), String.format(msgPattern, ct.category.getName()), Toast.LENGTH_SHORT).show();
+                    } else {
+                        ct.selected = true;
+                    }
                 }
+
+                Log.i(MAIN_ACTIVITY_TAG, "long clicked: " + ct);
 
                 adapter.notifyDataSetChanged();
                 return true;
@@ -154,7 +164,7 @@ public class MainActivity extends ActionBarActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CategoryTotal categoryTotal = (CategoryTotal) parent.getItemAtPosition(position);
                 Intent intent = new Intent(MainActivity.this, CategoryReportActivity.class);
-                intent.putExtra(CategoryReportActivity.CATEGORY_EXTRA, categoryTotal.category.name);
+                intent.putExtra(CategoryReportActivity.CATEGORY_EXTRA, categoryTotal.category.id);
                 startActivity(intent);
             }
         });

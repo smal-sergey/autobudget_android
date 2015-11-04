@@ -28,10 +28,10 @@ public class CategoryReportActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category_report);
 
-        category = CategoriesRepository.valueOf(getIntent().getStringExtra(CATEGORY_EXTRA));
+        category = CategoriesRepository.get(getIntent().getLongExtra(CATEGORY_EXTRA, -1L));
 
         mCategory = (TextView) findViewById(R.id.cr_lblCategory);
-        mCategory.setText(category.name);
+        mCategory.setText(category.getName());
         mCategoryReport = (ListView) findViewById(R.id.listCategoryReport);
 
         final MyApplication app = (MyApplication) getApplication();

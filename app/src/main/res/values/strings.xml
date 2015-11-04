@@ -28,6 +28,12 @@
     <string name="delete_category">Delete category</string>
     <string name="create_category_title">Create category</string>
     <string name="cancel">Cancel</string>
+    <string name="edit_category">Edit category</string>
+    <string name="enter_category_name">Enter category name</string>
+    <string name="edit_category_title">Edit category name</string>
+    <string name="category_exists">Category already exists</string>
+    <string name="ok">Ok</string>
+    <string name="txt_can_not_change_category_pattern">Category %s can not be changed</string>
     <string-array name="date_filter_array">
         <item>Last week</item>
         <item>Last month</item>

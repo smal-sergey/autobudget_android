@@ -19,7 +19,7 @@ import java.util.Set;
 
 import static com.smalser.autobudget.CategoriesRepository.OTHER;
 import static com.smalser.autobudget.CategoriesRepository.allCategories;
-import static com.smalser.autobudget.CategoriesRepository.valueOf;
+import static com.smalser.autobudget.CategoriesRepository.get;
 
 public class StatisticCollector {
     private static final String STATISTIC_COLLECTOR_TAG = "Statistic_collector_log";
@@ -54,15 +54,15 @@ public class StatisticCollector {
         SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
 
         for (String id : categoryPrefs.getAll().keySet()) {
-            Category category = valueOf(id);
+            Category category = get(Long.valueOf(id));
             if (category == null) {
                 categoryPrefs.edit().remove(id).apply();
             }
         }
 
         for (String id : messagePrefs.getAll().keySet()) {
-            String categoryName = messagePrefs.getString(id, OTHER.name);
-            Category category = valueOf(categoryName);
+            Long catId = messagePrefs.getLong(id, OTHER.id);
+            Category category = get(catId);
             if (category == null) {
                 messagePrefs.edit().remove(id).apply();
             }
@@ -103,7 +103,7 @@ public class StatisticCollector {
         SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
 
         for (Category category : allCategories()) {
-            Set<String> sources = categoryPrefs.getStringSet(category.name, new HashSet<String>());
+            Set<String> sources = categoryPrefs.getStringSet(category.getIdAsString(), new HashSet<String>());
 
             for (Message msg : this.messages) {
                 if (sources.contains(msg.source)) {
@@ -112,9 +112,9 @@ public class StatisticCollector {
             }
         }
 
-        for (String id : messagePrefs.getAll().keySet()) {
-            Category category = valueOf(messagePrefs.getString(id, OTHER.name));
-            Message msg = id2message.get(id);
+        for (String msgId : messagePrefs.getAll().keySet()) {
+            Category category = get(messagePrefs.getLong(msgId, OTHER.id));
+            Message msg = id2message.get(msgId);
             msg.setCategory(category);
         }
     }

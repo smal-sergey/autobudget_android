@@ -19,6 +19,6 @@ public class CategoryTotal {
 
     @Override
     public String toString() {
-        return "Category total " + category.name + ", selected=" + selected;
+        return "Category total " + category.getName() + ", selected=" + selected;
     }
 }

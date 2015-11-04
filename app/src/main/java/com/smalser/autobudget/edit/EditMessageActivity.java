@@ -147,12 +147,12 @@ public class EditMessageActivity extends Activity {
 
     public String loadTemplate(Context context, Category category) {
         SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
-        return prefs.getString(category.name, defaultTemplates(category.name));
+        return prefs.getString(category.getName(), defaultTemplates(category.getName()));
     }
 
     public void saveTemplate(Context context, String template, Category category) {
         SharedPreferences prefs = context.getSharedPreferences(getPrefsName(), 0);
-        prefs.edit().putString(category.name, template).apply();
+        prefs.edit().putString(category.getName(), template).apply();
     }
 
     private static String defaultTemplates(String name) {

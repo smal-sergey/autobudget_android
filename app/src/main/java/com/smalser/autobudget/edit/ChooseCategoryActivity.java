@@ -54,7 +54,7 @@ public class ChooseCategoryActivity extends Activity {
         mFullMessageText.setText(Html.fromHtml(highlighted));
 
         mCurCategory = (TextView) findViewById(R.id.lblCurCategory);
-        mCurCategory.setText(curCategory.name);
+        mCurCategory.setText(curCategory.getName());
 
         mOnlyThisMessage = (RadioButton) findViewById(R.id.radio_only_this_msg);
         mAllFromSource = (RadioButton) findViewById(R.id.radio_all_from_source);
@@ -86,24 +86,29 @@ public class ChooseCategoryActivity extends Activity {
                 SharedPreferences msgPrefs = getSharedPreferences(MainActivity.MESSAGE_PREFS, MODE_PRIVATE);
                 SharedPreferences categoryPrefs = getSharedPreferences(MainActivity.CATEGORY_PREFS, MODE_PRIVATE);
 
+                String newCatId = newCategory.getIdAsString();
                 if (mOnlyThisMessage.isChecked()) {
-                    msgPrefs.edit().putString(message.id, newCategory.name).apply();
+                    msgPrefs.edit().putLong(message.id, newCategory.id).apply();
                 } else if (mAllFromSource.isChecked()) {
-                    Set<String> oldSources = categoryPrefs.getStringSet(newCategory.name, new HashSet<String>());
+                    String msgSource = message.source;
 
                     Map<String, Message> idToMessage = app.getStatisticCollector().getIdToMessage();
                     for (String id : msgPrefs.getAll().keySet()) {
-                        if (idToMessage.get(id).source.equals(message.source)) {
+                        if (idToMessage.get(id).source.equals(msgSource)) {
                             msgPrefs.edit().remove(id);
                         }
                     }
 
-                    if (!oldSources.contains(message.source)) {
-                        Set<String> sources = new HashSet<>(oldSources);
-                        sources.add(message.source);
-                        categoryPrefs.edit().putStringSet(newCategory.name, sources).apply();
+                    for (String catId : categoryPrefs.getAll().keySet()) {
+                        Set<String> sources = categoryPrefs.getStringSet(catId, new HashSet<String>());
+                        if (sources.remove(msgSource)) {
+                            categoryPrefs.edit().putStringSet(catId, sources).apply();
+                        }
                     }
 
+                    Set<String> sources = categoryPrefs.getStringSet(newCatId, new HashSet<String>());
+                    sources.add(msgSource);
+                    categoryPrefs.edit().putStringSet(newCatId, sources).apply();
                 }
 
                 finish();

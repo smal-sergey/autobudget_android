@@ -47,7 +47,7 @@ public class CategoriesAdapter extends BaseAdapter implements SpinnerAdapter {
 
         TextView rowView = (TextView) convertView;
         Category item = (Category) this.getItem(position);
-        rowView.setText(item.name);
+        rowView.setText(item.getName());
 
         return rowView;
     }

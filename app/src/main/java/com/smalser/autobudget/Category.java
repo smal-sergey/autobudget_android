@@ -1,33 +1,38 @@
 package com.smalser.autobudget;
 
 public class Category {
-    public final String name;
+    public final long id;
+    private String name;
 
-    Category(String name) {
+    Category(long id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        Category other = (Category) obj;
-        return this.name.equals(other.name);
+    public String getName() {
+        return name;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 3;
-        hash = 53 * hash + this.name.hashCode();
-        return hash;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
     public String toString() {
         return "Category " + name;
+    }
+
+    public String getIdAsString() {
+        return Long.valueOf(id).toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Category && Long.compare(id, ((Category) o).id) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.valueOf(id).hashCode();
     }
 }

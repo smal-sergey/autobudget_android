@@ -1,11 +1,15 @@
 package com.smalser.autobudget.main;
 
+import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +21,8 @@ import com.smalser.autobudget.Utils;
 import java.util.List;
 
 public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
+    private static final String CAT_TOTAL_ADAPTER_TAG = "CatTotalAdapter_log";
+
     public static final int PLAIN_CATEGORY_TYPE = 0;
     public static final int SELECTED_CATEGORY_TYPE = 1;
     public static final int NUMBER_CATEGORY_TYPES = 2;
@@ -36,10 +42,9 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    public View getView(int position, View convertView, final ViewGroup parent) {
+        final LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rowView = convertView;
-        final CategoryTotal ct = this.getItem(position);
 
         int viewType = getItemViewType(position);
         if (convertView == null) {
@@ -62,9 +67,62 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
                 deleteBtn.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        CategoryTotal ct = getSelected();
+
                         remove(ct);
-                        Toast.makeText(getContext(), "Category " + ct.category.name + " deleted", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "Category " + ct.category.getName() + " deleted", Toast.LENGTH_SHORT).show();
                         CategoriesRepository.delete(ct.category);
+                    }
+                });
+            }
+
+            ImageButton editBtn = (ImageButton) rowView.findViewById(R.id.editCategoryBtn);
+            if (editBtn != null) {
+                editBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        CategoryTotal ct = getSelected();
+                        Log.i(CAT_TOTAL_ADAPTER_TAG, "Start editing " + ct);
+
+                        final View catTextView = layoutInflater.inflate(R.layout.add_category_dialog, null);
+                        ((EditText) catTextView.findViewById(R.id.newCategoryName)).setText(ct.category.getName());
+
+
+                        final AlertDialog.Builder editCategoryDialogBuilder = new AlertDialog.Builder(getContext());
+
+                        editCategoryDialogBuilder.setCancelable(true)
+                                .setMessage(R.string.enter_category_name)
+                                .setTitle(R.string.edit_category_title)
+                                .setView(catTextView)
+                                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                    }
+                                })
+                                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                        final AlertDialog editCategoryDialog = editCategoryDialogBuilder.create();
+                        editCategoryDialog.show();
+                        Button addButton = editCategoryDialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                        addButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                EditText mCategoryName = (EditText) editCategoryDialog.findViewById(R.id.newCategoryName);
+                                String name = mCategoryName.getText().toString();
+                                CategoryTotal ct = getSelected();
+
+                                if (CategoriesRepository.exists(name)) {
+                                    Toast.makeText(getContext(), R.string.category_exists, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    CategoriesRepository.rename(ct.category, name);
+                                    editCategoryDialog.dismiss();
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -74,11 +132,22 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
 
         ViewHolder holder = (ViewHolder) rowView.getTag();
 
-        holder.category.setText(ct.category.name);
+        CategoryTotal ct = getItem(position);
+        holder.category.setText(ct.category.getName());
         holder.total.setText(Utils.getFormattedCash(ct.result));
         holder.count.setText(String.format("(%d)", ct.messages.size()));
 
         return rowView;
+    }
+
+    private CategoryTotal getSelected() {
+        for (int i = 0; i < getCount(); i++) {
+            CategoryTotal category = getItem(i);
+            if (category.selected) {
+                return category;
+            }
+        }
+        return null;
     }
 
     class ViewHolder {

@@ -13,64 +13,98 @@ import java.util.Map;
 
 public class CategoriesRepository {
     private static final String CATEGORIES_REPOSITORY_TAG = "Cat_repository_log";
-    private static final Map<String, Category> categories = new HashMap<>();
+    private static final Map<String, Category> nameToCategory = new HashMap<>();
+
+    private static SharedPreferences categoryNamesPrefs;
+    private static SharedPreferences categoryPrefs;
+    private static SharedPreferences messagePrefs;
 
     public static Category OTHER;
-    private static Context context;
 
     public static void initialize(Context context) {
-        CategoriesRepository.context = context;
-        OTHER = create("Other");
+        categoryNamesPrefs = context.getSharedPreferences(MainActivity.CATEGORY_NAMES_PREFS, Context.MODE_PRIVATE);
+        categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
+        messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
+
+        loadCategories();
+
+        OTHER = create("Other", 0L);
+    }
+
+    private static void loadCategories() {
+        for (String catId : categoryNamesPrefs.getAll().keySet()) {
+            Long id = Long.valueOf(catId);
+            String name = categoryNamesPrefs.getString(catId, "");
+            create(name, id);
+        }
     }
 
     public static Category create(String name) {
-        if (categories.containsKey(name)) {
+        if (nameToCategory.containsKey(name)) {
             Log.w(CATEGORIES_REPOSITORY_TAG, "Trying to create already existing category '" + name + "'");
-            return categories.get(name);
+            return nameToCategory.get(name);
         }
-        Category category = new Category(name);
-        categories.put(name, category);
+        return create(name, System.currentTimeMillis());
+    }
+
+    private static Category create(String name, long id) {
+        Category category = new Category(id, name);
+        nameToCategory.put(name, category);
         addCategoryToPrefs(category);
 
         return category;
     }
 
-    public static boolean delete(Category category) {
+    public static void delete(Category category) {
         removeCategoryFromPrefs(category);
-        return allCategories().remove(category);
+        nameToCategory.remove(category.getName());
     }
 
-    public static Category valueOf(String name) {
-        Category category = categories.get(name);
-        if (category == null) {
-            Log.e(CATEGORIES_REPOSITORY_TAG, "Trying to use not existing category '" + name + "'");
+    public static boolean exists(String name) {
+        return nameToCategory.containsKey(name);
+    }
+
+    public static Category get(long id) {
+        for (Category cat : allCategories()) {
+            if (cat.id == id) {
+                return cat;
+            }
         }
-        return category;
+        Log.e(CATEGORIES_REPOSITORY_TAG, "Trying to get not existing category with id=" + id + ".");
+        return null;
+    }
+
+    public static void rename(Category category, String name) {
+        nameToCategory.remove(category.getName());
+        nameToCategory.put(name, category);
+        categoryNamesPrefs.edit().putString(category.getIdAsString(), name).apply();
+        category.setName(name);
     }
 
     public static Collection<Category> allCategories() {
-        return categories.values();
+        return nameToCategory.values();
     }
 
     private static void removeCategoryFromPrefs(Category category) {
-        SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
-        SharedPreferences messagePrefs = context.getSharedPreferences(MainActivity.MESSAGE_PREFS, Context.MODE_PRIVATE);
+        String catId = category.getIdAsString();
+        categoryNamesPrefs.edit().remove(catId).apply();
+        categoryPrefs.edit().remove(catId).apply();
 
-        categoryPrefs.edit().remove(category.name).apply();
-
-        for (String id : messagePrefs.getAll().keySet()) {
-            String categoryName = messagePrefs.getString(id, CategoriesRepository.OTHER.name);
-            if (categoryName.equals(category.name)) {
-                messagePrefs.edit().remove(id).apply();
+        for (String msgId : messagePrefs.getAll().keySet()) {
+            String categoryId = messagePrefs.getString(msgId, null);
+            if (catId.equals(categoryId)) {
+                messagePrefs.edit().remove(msgId).apply();
             }
         }
     }
 
     private static void addCategoryToPrefs(Category category) {
-        SharedPreferences categoryPrefs = context.getSharedPreferences(MainActivity.CATEGORY_PREFS, Context.MODE_PRIVATE);
-
-        if (!categoryPrefs.contains(category.name)) {
-            categoryPrefs.edit().putStringSet(category.name, new HashSet<String>()).apply();
+        String catId = category.getIdAsString();
+        if (!categoryPrefs.contains(catId)) {
+            categoryPrefs.edit().putStringSet(catId, new HashSet<String>()).apply();
+        }
+        if (!categoryNamesPrefs.contains(catId)) {
+            categoryNamesPrefs.edit().putString(catId, category.getName()).apply();
         }
     }
 }
