@@ -71,10 +71,31 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
                     public void onClick(View v) {
                         CategoryTotal ct = getSelected();
 
-                        remove(ct);
-                        Toast.makeText(getContext(), "Category " + ct.category.getName() + " deleted", Toast.LENGTH_SHORT).show();
-                        CategoriesRepository.delete(ct.category);
-                        mainActivity.updateCategories();
+                        String titleTemplate = getContext().getString(R.string.delete_category_dialog_title_template);
+                        String title = String.format(titleTemplate, ct.category.getName());
+
+                        final AlertDialog.Builder deleteCategoryDialogBuilder = new AlertDialog.Builder(getContext());
+
+                        deleteCategoryDialogBuilder.setCancelable(true)
+                                .setMessage(R.string.delete_category_dialog_msg)
+                                .setTitle(title)
+                                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        CategoryTotal ct = getSelected();
+                                        remove(ct);
+                                        Toast.makeText(getContext(), "Category " + ct.category.getName() + " deleted", Toast.LENGTH_SHORT).show();
+                                        CategoriesRepository.delete(ct.category);
+                                        mainActivity.updateCategories();
+                                    }
+                                })
+                                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Toast.makeText(getContext(), "Cancelled", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                        deleteCategoryDialogBuilder.create().show();
                     }
                 });
             }
@@ -119,8 +140,12 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
                                 String name = mCategoryName.getText().toString();
                                 CategoryTotal ct = getSelected();
 
-                                if (CategoriesRepository.exists(name)) {
+                                if (name.equals(ct.category.getName())) {
+                                    editCategoryDialog.dismiss();
+                                } else if (CategoriesRepository.exists(name)) {
                                     Toast.makeText(getContext(), R.string.category_exists, Toast.LENGTH_SHORT).show();
+                                } else if (name.isEmpty()) {
+                                    Toast.makeText(getContext(), R.string.category_name_empty_alarm, Toast.LENGTH_SHORT).show();
                                 } else {
                                     CategoriesRepository.rename(ct.category, name);
                                     editCategoryDialog.dismiss();

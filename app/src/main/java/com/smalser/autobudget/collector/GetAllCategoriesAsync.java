@@ -42,12 +42,14 @@ public class GetAllCategoriesAsync extends AsyncTask<Calendar, Void, List<Catego
         super.onPostExecute(categoryTotals);
         loadingIndicator.setVisibility(View.GONE);
         listAdapter.clear();
+        Collections.sort(categoryTotals);
 
         double sum = 0;
         for (CategoryTotal categoryTotal : categoryTotals) {
             listAdapter.add(categoryTotal);
             sum += categoryTotal.result;
         }
+        listAdapter.notifyDataSetChanged();
         mTotalTxt.setText(Utils.getFormattedCash(sum));
     }
 

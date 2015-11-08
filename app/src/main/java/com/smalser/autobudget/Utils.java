@@ -24,6 +24,7 @@ public class Utils {
 
         formatter = new DecimalFormat("0.00#", symbols);
         formatter.setMaximumFractionDigits(2);
+        formatter.setGroupingUsed(true);
     }
 
     public static String stringifyDate(Calendar c) {
