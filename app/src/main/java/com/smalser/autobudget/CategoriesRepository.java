@@ -29,6 +29,32 @@ public class CategoriesRepository {
         loadCategories();
 
         OTHER = create("Other", 0L);
+
+//        dumpSavedCategories();
+    }
+
+    public static void dumpSavedCategories() {
+        StringBuilder names = new StringBuilder();
+        names.append("\nNames:\n");
+
+        for (String key : categoryNamesPrefs.getAll().keySet()) {
+            names.append(key).append(" - ").append(categoryNamesPrefs.getString(key, "")).append("\n");
+        }
+        System.out.println(names.toString());
+
+        StringBuilder catPrefs = new StringBuilder();
+        catPrefs.append("\nBy category:\n");
+        for (String key : categoryPrefs.getAll().keySet()) {
+            catPrefs.append(key).append(" - ").append(categoryPrefs.getStringSet(key, new HashSet<String>())).append("\n");
+        }
+        System.out.println(catPrefs.toString());
+
+        StringBuilder msgPrefs = new StringBuilder();
+        msgPrefs.append("\nBy message:\n");
+        for (String key : messagePrefs.getAll().keySet()) {
+            msgPrefs.append(key).append(" - ").append(messagePrefs.getLong(key, -1)).append("\n");
+        }
+        System.out.println(msgPrefs.toString());
     }
 
     private static void loadCategories() {

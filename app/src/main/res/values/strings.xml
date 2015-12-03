@@ -47,5 +47,14 @@
         <item>All time</item>
         <item>Custom</item>
     </string-array>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+    <!-- Example General settings -->
+    <string name="pref_header_general">General</string>
+    <string name="pref_title_hide_empty_categories">Hide empty categories</string>
+    <string name="pref_description_hide_empty_categories">Category which doesn\'t have any items for specified period is empty.
+    </string>
+
 
 </resources>

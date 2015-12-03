@@ -82,7 +82,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/addCategoryBtn"
-        android:layout_below="@id/action_bar_2"/>
+        android:layout_below="@id/action_bar_2" />
 
     <ImageButton
         android:id="@+id/addCategoryBtn"

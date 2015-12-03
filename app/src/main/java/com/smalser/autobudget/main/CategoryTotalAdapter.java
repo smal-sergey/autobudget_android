@@ -3,6 +3,8 @@ package com.smalser.autobudget.main;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,7 +19,9 @@ import android.widget.Toast;
 import com.smalser.autobudget.CategoriesRepository;
 import com.smalser.autobudget.R;
 import com.smalser.autobudget.Utils;
+import com.smalser.autobudget.settings.SettingsActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
@@ -27,10 +31,31 @@ public class CategoryTotalAdapter extends ArrayAdapter<CategoryTotal> {
     public static final int SELECTED_CATEGORY_TYPE = 1;
     public static final int NUMBER_CATEGORY_TYPES = 2;
     private final MainActivity mainActivity;
+    private final List<CategoryTotal> items;
 
     public CategoryTotalAdapter(MainActivity mainActivity, int resource, List<CategoryTotal> objects) {
         super(mainActivity, resource, objects);
         this.mainActivity = mainActivity;
+        this.items = objects;
+    }
+
+    @Override
+    public void notifyDataSetChanged() {
+        SharedPreferences userPrefs = PreferenceManager.getDefaultSharedPreferences(mainActivity);
+        boolean hide = userPrefs.getBoolean(SettingsActivity.HIDE_EMPTY_CATEGORIES_KEY, false);
+        if (hide) {
+            List<CategoryTotal> hidden = new ArrayList<>();
+            for (CategoryTotal obj : items) {
+                if (obj.messages.isEmpty()) {
+                    hidden.add(obj);
+                }
+            }
+            for (CategoryTotal toHide : hidden) {
+                remove(toHide);
+            }
+        }
+
+        super.notifyDataSetChanged();
     }
 
     @Override

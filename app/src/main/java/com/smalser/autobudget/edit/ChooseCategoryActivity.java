@@ -94,18 +94,18 @@ public class ChooseCategoryActivity extends Activity {
                     Map<String, Message> idToMessage = app.getStatisticCollector().getIdToMessage();
                     for (String id : msgPrefs.getAll().keySet()) {
                         if (idToMessage.get(id).source.equals(msgSource)) {
-                            msgPrefs.edit().remove(id);
+                            msgPrefs.edit().remove(id).apply();
                         }
                     }
 
                     for (String catId : categoryPrefs.getAll().keySet()) {
-                        Set<String> sources = categoryPrefs.getStringSet(catId, new HashSet<String>());
+                        Set<String> sources = new HashSet<>(categoryPrefs.getStringSet(catId, new HashSet<String>()));
                         if (sources.remove(msgSource)) {
                             categoryPrefs.edit().putStringSet(catId, sources).apply();
                         }
                     }
 
-                    Set<String> sources = categoryPrefs.getStringSet(newCatId, new HashSet<String>());
+                    Set<String> sources = new HashSet<>(categoryPrefs.getStringSet(newCatId, new HashSet<String>()));
                     sources.add(msgSource);
                     categoryPrefs.edit().putStringSet(newCatId, sources).apply();
                 }

@@ -34,6 +34,7 @@ import com.smalser.autobudget.collector.MessageCompiler;
 import com.smalser.autobudget.collector.SmsParser;
 import com.smalser.autobudget.collector.StatisticCollector;
 import com.smalser.autobudget.report.CategoryReportActivity;
+import com.smalser.autobudget.settings.SettingsActivity;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -328,6 +329,7 @@ public class MainActivity extends ActionBarActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
 

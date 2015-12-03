@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -32,23 +33,23 @@
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
         <!--<RelativeLayout-->
-            <!--android:id="@+id/cr_loadingPanel"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:layout_margin="10dp"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_alignParentEnd="true">-->
+        <!--android:id="@+id/cr_loadingPanel"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--android:layout_margin="10dp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:layout_alignParentEnd="true">-->
 
-            <!--<ProgressBar-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:indeterminate="true" />-->
+        <!--<ProgressBar-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:indeterminate="true" />-->
         <!--</RelativeLayout>-->
     </RelativeLayout>
 
     <ListView
         android:id="@+id/listCategoryReport"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content" />
 </LinearLayout>

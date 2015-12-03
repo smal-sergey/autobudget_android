@@ -1,0 +1,8 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="pref_hide_empty_categories"
+        android:title="@string/pref_title_hide_empty_categories"
+        android:summary="@string/pref_description_hide_empty_categories"
+        android:defaultValue="true" />
+</PreferenceScreen>
